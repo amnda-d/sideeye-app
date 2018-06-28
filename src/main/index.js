@@ -14,7 +14,11 @@ let py
 function createMainWindow() {
   const window = new BrowserWindow()
 
-  py = child_process.exec(`chmod +x ${path.join(process.resourcesPath, 'dist/main/api/api')}`, () => child_process.execFile(path.join(process.resourcesPath, 'dist/main/api/api')));
+  if (isDevelopment) {
+    py = child_process.exec(`chmod +x ${path.join(__dirname, 'dist/main/api/api')}`, () => child_process.execFile(path.join(__dirname, 'dist/main/api/api')));
+  } else {
+    py = child_process.exec(`chmod +x ${path.join(process.resourcesPath, 'dist/main/api/api')}`, () => child_process.execFile(path.join(process.resourcesPath, 'dist/main/api/api')));
+  }
 
   if (isDevelopment) {
     window.webContents.openDevTools()
@@ -49,6 +53,7 @@ function createMainWindow() {
 app.on('window-all-closed', () => {
   // on macOS it is common for applications to stay open until the user explicitly quits
   if (process.platform !== 'darwin') {
+    py.kill('SIGTERM');
     app.quit()
   }
 })
@@ -66,5 +71,5 @@ app.on('ready', () => {
 })
 
 app.on('quit', function() {
-  py.kill('SIGINT');
+  py.kill('SIGTERM');
 });

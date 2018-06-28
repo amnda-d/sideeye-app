@@ -1,5 +1,6 @@
 import time
 from flask import Flask
+from flask import jsonify
 
 app = Flask(__name__)
 
@@ -9,7 +10,7 @@ def hello():
 
 @app.route("/test")
 def test():
-    return "test 2"
+    return jsonify(test='test 2')
 
 @app.after_request
 def after_request(response):
@@ -19,4 +20,4 @@ def after_request(response):
   return response
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=5000)
+    app.run(host='127.0.0.1', port=3001)
