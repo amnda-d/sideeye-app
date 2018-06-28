@@ -1,0 +1,40 @@
+{
+  "name": "SideEye",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "yarn pyinstaller && electron-webpack dev",
+    "compile": "yarn pyinstaller && electron-webpack",
+    "dist": "yarn compile && electron-builder",
+    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
+    "pyinstaller": "rm -rf src/apidist && pyinstaller api/api.py --distpath src/apidist"
+  },
+  "dependencies": {
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "source-map-support": "^0.5.5"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.0.0-beta.51",
+    "@babel/preset-react": "^7.0.0-beta.51",
+    "copy-webpack-plugin": "^4.5.2",
+    "electron": "2.0.0",
+    "electron-builder": "^20.11.1",
+    "electron-webpack": "^2.0.1",
+    "webpack": "^4.8.1"
+  },
+  "resolutions": {
+    "webpack-sources": "1.0.1"
+  },
+  "electronWebpack": {
+    "renderer": {
+      "webpackConfig": "webpack.renderer.config.js"
+    },
+    "main": {
+      "webpackConfig": "webpack.main.config.js"
+    }
+  },
+  "build": {
+    "extraResources": "dist/main/api"
+  }
+}
