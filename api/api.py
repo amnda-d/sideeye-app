@@ -10,7 +10,7 @@ def hello():
 
 @app.route("/test")
 def test():
-    return jsonify(test='test 2')
+    return jsonify(test='test')
 
 @app.after_request
 def after_request(response):

@@ -1,75 +1,79 @@
-'use strict'
+"use strict";
 
-import { app, BrowserWindow } from 'electron'
-import * as path from 'path'
-import { format as formatUrl } from 'url'
-import child_process from 'child_process'
+import { app, BrowserWindow } from "electron";
+import * as path from "path";
+import { format as formatUrl } from "url";
+import child_process from "child_process";
 
-const isDevelopment = process.env.NODE_ENV !== 'production'
+const isDevelopment = process.env.NODE_ENV !== "production";
 
-// global reference to mainWindow (necessary to prevent window from being garbage collected)
-let mainWindow
-let py
+let mainWindow;
+let py;
 
 function createMainWindow() {
-  const window = new BrowserWindow()
+  const window = new BrowserWindow();
 
   if (isDevelopment) {
-    py = child_process.exec(`chmod +x ${path.join(__dirname, 'dist/main/api/api')}`, () => child_process.execFile(path.join(__dirname, 'dist/main/api/api')));
+    window.webContents.openDevTools();
+  }
+
+  if (isDevelopment) {
+    child_process.exec(
+      `chmod +x ${path.join(__static, "apidist/api/api")}`,
+      () => {
+        py = child_process.execFile(path.join(__static, "apidist/api/api"));
+      }
+    );
   } else {
-    py = child_process.exec(`chmod +x ${path.join(process.resourcesPath, 'dist/main/api/api')}`, () => child_process.execFile(path.join(process.resourcesPath, 'dist/main/api/api')));
+    child_process.exec(
+      `chmod +x ${path.join(process.resourcesPath, "static/apidist/api/api")}`,
+      () => {
+        py = child_process.execFile(
+          path.join(process.resourcesPath, "static/apidist/api/api")
+        );
+      }
+    );
   }
 
   if (isDevelopment) {
-    window.webContents.openDevTools()
+    window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`);
+  } else {
+    window.loadURL(
+      formatUrl({
+        pathname: path.join(__dirname, "index.html"),
+        protocol: "file",
+        slashes: true
+      })
+    );
   }
 
-  if (isDevelopment) {
-    window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`)
-  }
-  else {
-    window.loadURL(formatUrl({
-      pathname: path.join(__dirname, 'index.html'),
-      protocol: 'file',
-      slashes: true
-    }))
-  }
+  window.on("closed", () => {
+    py.kill("SIGTERM");
+    mainWindow = null;
+  });
 
-  window.on('closed', () => {
-    mainWindow = null
-  })
-
-  window.webContents.on('devtools-opened', () => {
-    window.focus()
+  window.webContents.on("devtools-opened", () => {
+    window.focus();
     setImmediate(() => {
-      window.focus()
-    })
-  })
+      window.focus();
+    });
+  });
 
-  return window
+  return window;
 }
 
-// quit application when all windows are closed
-app.on('window-all-closed', () => {
-  // on macOS it is common for applications to stay open until the user explicitly quits
-  if (process.platform !== 'darwin') {
-    py.kill('SIGTERM');
-    app.quit()
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
   }
-})
+});
 
-app.on('activate', () => {
-  // on macOS it is common to re-create a window even after all windows have been closed
+app.on("activate", () => {
   if (mainWindow === null) {
-    mainWindow = createMainWindow()
+    mainWindow = createMainWindow();
   }
-})
+});
 
-// create main BrowserWindow when electron is ready
-app.on('ready', () => {
-  mainWindow = createMainWindow()
-})
-
-app.on('quit', function() {
-  py.kill('SIGTERM');
+app.on("ready", () => {
+  mainWindow = createMainWindow();
 });

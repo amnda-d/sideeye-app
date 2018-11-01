@@ -7,34 +7,34 @@
     "compile": "yarn pyinstaller && electron-webpack",
     "dist": "yarn compile && electron-builder",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
-    "pyinstaller": "rm -rf src/apidist && pyinstaller api/api.py --distpath src/apidist"
+    "pyinstaller": "rm -rf static/apidist && pyinstaller api/api.py --distpath static/apidist"
   },
   "dependencies": {
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
-    "source-map-support": "^0.5.5"
+    "history": "^4.7.2",
+    "react": "^16.6.0",
+    "react-dom": "^16.6.0",
+    "react-router": "^4.3.1",
+    "source-map-support": "^0.5.9"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.0.0-beta.51",
-    "@babel/preset-react": "^7.0.0-beta.51",
-    "copy-webpack-plugin": "^4.5.2",
-    "electron": "2.0.0",
-    "electron-builder": "^20.11.1",
-    "electron-webpack": "^2.0.1",
-    "webpack": "^4.8.1"
+    "@babel/preset-react": "^7.0.0",
+    "electron": "3.0.7",
+    "electron-builder": "^20.29.0",
+    "electron-webpack": "^2.3.1",
+    "prettier": "^1.14.3",
+    "webpack": "^4.23.1"
   },
   "resolutions": {
-    "webpack-sources": "1.0.1"
+    "upath": "^1.0.5"
   },
   "electronWebpack": {
     "renderer": {
       "webpackConfig": "webpack.renderer.config.js"
-    },
-    "main": {
-      "webpackConfig": "webpack.main.config.js"
     }
   },
   "build": {
-    "extraResources": "dist/main/api"
+    "extraResources": [
+      "static/apidist/api/**"
+    ]
   }
 }
