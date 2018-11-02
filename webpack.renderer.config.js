@@ -1,19 +1,22 @@
-const path = require("path");
+const path = require('path');
 
 module.exports = {
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        loader: "babel-loader"
-      }
-    ]
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/flow', '@babel/env', '@babel/react'],
+        },
+      },
+    ],
   },
   resolve: {
-    extensions: [".js", ".jsx"],
-    modules: ["node_modules"],
+    extensions: ['.js', '.jsx'],
+    modules: ['node_modules'],
     alias: {
-      renderer: path.resolve(__dirname, "src/renderer")
-    }
-  }
+      renderer: path.resolve(__dirname, 'src/renderer'),
+    },
+  },
 };
