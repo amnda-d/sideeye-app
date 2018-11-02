@@ -10,7 +10,12 @@
     "pyinstaller": "rm -rf static/apidist && pyinstaller api/api.py --distpath static/apidist"
   },
   "dependencies": {
+    "@blueprintjs/core": "^3.7.0",
+    "@blueprintjs/select": "^3.2.1",
+    "csv-parse": "^3.1.3",
     "history": "^4.7.2",
+    "lodash": "^4.17.11",
+    "promise-file-reader": "^1.0.2",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-router": "^4.3.1",

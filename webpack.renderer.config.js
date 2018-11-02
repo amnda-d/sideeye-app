@@ -7,7 +7,18 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: 'babel-loader',
         options: {
-          presets: ['@babel/flow', '@babel/env', '@babel/react'],
+          presets: [
+            '@babel/flow',
+            [
+              '@babel/env',
+              {
+                targets: {
+                  node: 'current',
+                },
+              },
+            ],
+            '@babel/react',
+          ],
         },
       },
     ],

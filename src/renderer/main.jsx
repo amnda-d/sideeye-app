@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { MemoryRouter, Route, IndexRoute, Link } from 'react-router';
 import styled from 'styled-components';
+import { RegionInput } from 'renderer/region-input';
 
 import getRequest from 'renderer/get_request';
 
@@ -35,7 +36,7 @@ class SideEye extends React.Component<{}, { test: ?string }> {
 const App = () => (
   <MemoryRouter>
     <Wrapper>
-      <Route exact path="/" component={SideEye} />
+      <Route exact path="/" component={RegionInput} />
     </Wrapper>
   </MemoryRouter>
 );
