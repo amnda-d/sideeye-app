@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { MemoryRouter, Route, IndexRoute, Link } from 'react-router';
 import styled from 'styled-components';
 import { RegionInput } from 'renderer/region-input';
+import { colors } from 'renderer/colors';
 
 import getRequest from 'renderer/get_request';
 
@@ -42,7 +43,8 @@ const App = () => (
 );
 
 const Wrapper = styled.div`
-  background-color: #d1fff4;
+  color: ${colors.text};
+  background-color: ${colors.white};
   width: 100vw;
   height: 100vh;
 `;

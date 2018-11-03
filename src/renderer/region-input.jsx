@@ -19,6 +19,7 @@ import {
   maxBy,
   includes,
 } from 'lodash';
+import { colors } from 'renderer/colors';
 
 export class RegionInput extends React.Component<
   {},
@@ -128,7 +129,7 @@ export class RegionInput extends React.Component<
         />
         {this.state.regionFile && (
           <TableWrapper>
-            <StyledTable interactive>
+            <StyledTable>
               <thead>
                 <tr>
                   {map(this.state.regionFile[0], (col, key) => (
@@ -149,7 +150,9 @@ export class RegionInput extends React.Component<
                           />
                         )}
                       >
-                        <Button>{this.state.columns[key]}</Button>
+                        <StyledHeaderButton>
+                          {this.state.columns[key]}
+                        </StyledHeaderButton>
                       </Select>
                     </th>
                   ))}
@@ -172,14 +175,40 @@ export class RegionInput extends React.Component<
   }
 }
 
+const StyledHeaderButton = styled.button`
+  color: ${colors.gray};
+  border: none;
+  background-color: ${colors.green};
+  font-weight: bold;
+  height: 40px;
+  min-width: 50px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${colors.lightGreen};
+  }
+`;
+
 const TableWrapper = styled.div`
   height: 80%;
   overflow: scroll;
+  margin: 40px;
 `;
 
-const StyledTable = styled(HTMLTable)`
+const StyledTable = styled.table`
   margin: 0 auto;
   align-self: center;
+  border-collapse: collapse;
+
+  tbody tr {
+    text-align: center;
+    height: 30px;
+    border-bottom: 1px solid rgba(85, 81, 82, 0.1);
+
+    &:hover {
+      background-color: rgba(85, 81, 82, 0.1);
+    }
+  }
 `;
 
 const StyledFileInput = styled(FileInput)`
