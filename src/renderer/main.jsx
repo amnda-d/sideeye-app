@@ -6,33 +6,33 @@ import styled from 'styled-components';
 import { RegionInput } from 'renderer/region-input';
 import { colors } from 'renderer/colors';
 
-import getRequest from 'renderer/get_request';
+// import getRequest from 'renderer/get_request';
 
-class SideEye extends React.Component<{}, { test: ?string }> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      test: null,
-    };
-  }
-
-  render() {
-    return (
-      <div>
-        <button
-          onClick={() =>
-            getRequest(`http://localhost:3001/test`).then(r =>
-              this.setState({ test: r.test }),
-            )
-          }
-        >
-          dsfasdf
-        </button>
-        <p>{this.state.test}</p>
-      </div>
-    );
-  }
-}
+// class SideEye extends React.Component<{}, { test: ?string }> {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       test: null,
+//     };
+//   }
+//
+//   render() {
+//     return (
+//       <div>
+//         <button
+//           onClick={() =>
+//             getRequest(`http://localhost:3001/test`).then(r =>
+//               this.setState({ test: r.test }),
+//             )
+//           }
+//         >
+//           dsfasdf
+//         </button>
+//         <p>{this.state.test}</p>
+//       </div>
+//     );
+//   }
+// }
 
 const App = () => (
   <MemoryRouter>

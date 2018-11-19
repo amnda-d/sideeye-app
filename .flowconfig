@@ -8,5 +8,6 @@
 
 [options]
 module.name_mapper='^renderer' ->'<PROJECT_ROOT>/src/renderer'
+module.name_mapper='^components' ->'<PROJECT_ROOT>/src/renderer/components'
 
 [strict]

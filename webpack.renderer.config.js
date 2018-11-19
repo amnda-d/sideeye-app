@@ -28,6 +28,7 @@ module.exports = {
     modules: ['node_modules'],
     alias: {
       renderer: path.resolve(__dirname, 'src/renderer'),
+      components: path.resolve(__dirname, 'src/renderer/components'),
     },
   },
 };

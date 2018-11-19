@@ -13,6 +13,7 @@ import {
   range,
   zipObject,
   isEqual,
+  some,
   split,
   chain,
   trim,
@@ -20,11 +21,14 @@ import {
   includes,
 } from 'lodash';
 import { colors } from 'renderer/colors';
+import { Button as NextButton } from 'components/button';
+import { getRequest, postRequest } from 'renderer/get_request';
 
 export class RegionInput extends React.Component<
   {},
   {
     regionFile: ?(string[][]),
+    regionFileName: ?string,
     columns: { [string]: string },
     boundaryStart: number,
     yValues: boolean,
@@ -34,6 +38,7 @@ export class RegionInput extends React.Component<
     super(props);
     this.state = {
       regionFile: null,
+      regionFileName: null,
       columns: {},
       boundaryStart: 3,
       yValues: false,
@@ -74,6 +79,7 @@ export class RegionInput extends React.Component<
         );
     this.setState({
       regionFile,
+      regionFileName: newFile.name,
       yValues,
       boundaryStart: 3,
       columns: zipObject(range(maxLength), columns),
@@ -118,11 +124,33 @@ export class RegionInput extends React.Component<
     });
   }
 
+  async parseRegionFile() {
+    const regions = map(this.state.regionFile, item => item.join('\t')).join(
+      '\n',
+    );
+    const regionConfig = {
+      number: parseInt(
+        findKey(this.state.columns, value => value === 'Item Label'),
+      ),
+      condition: parseInt(
+        findKey(this.state.columns, value => value === 'Condition Label'),
+      ),
+      boundaries_start: parseInt(
+        findKey(this.state.columns, value => /Boundary/.test(value)),
+      ),
+      includes_y: some(this.state.columns, value => /Y/.test(value)),
+      file_name: this.state.regionFileName,
+      regions,
+    };
+    console.log(this.state.columns, regionConfig);
+    await postRequest('http://localhost:3001/region_cnt', regionConfig);
+  }
+
   render() {
     return (
       <Wrapper>
         <StyledFileInput
-          text="Choose Region File..."
+          text={this.state.regionFileName || 'Choose Region File...'}
           onInputChange={async e =>
             await this.processNewFile(e.target.files[0])
           }
@@ -170,6 +198,12 @@ export class RegionInput extends React.Component<
             </StyledTable>
           </TableWrapper>
         )}
+        {this.state.regionFile && (
+          <NextButton
+            text="Parse Region File"
+            onClick={() => this.parseRegionFile()}
+          />
+        )}
       </Wrapper>
     );
   }
@@ -180,7 +214,7 @@ const StyledHeaderButton = styled.button`
   border: none;
   background-color: ${colors.green};
   font-weight: bold;
-  height: 40px;
+  height: 55px;
   min-width: 50px;
   cursor: pointer;
 
