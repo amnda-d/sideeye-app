@@ -9,7 +9,11 @@ let mainWindow;
 let py;
 
 function createMainWindow() {
-  const window = new BrowserWindow();
+  const window = new BrowserWindow({
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
 
   if (isDevelopment) {
     window.webContents.openDevTools();
