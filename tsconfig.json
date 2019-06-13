@@ -19,7 +19,7 @@
       "renderer/*": ["src/renderer/*"],
       "main/*": ["src/main/*"]
     },
-    "types": ["node"]
+    "types": ["jest", "node"]
   },
   "include": ["./src", "./@types"],
   "exclude": ["node_modules"]

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FileInput, MenuItem } from "@blueprintjs/core";
+import { FileInput, MenuItem, Switch } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 import { readAsText } from "promise-file-reader";
 import styled from "styled-components";
@@ -12,8 +12,11 @@ import {
   isEqual,
   chain,
   trim,
-  maxBy,
-  includes,
+  max,
+  isFinite,
+  startsWith,
+  toNumber,
+  sortBy,
   mapValues
 } from "lodash";
 import { colors } from "renderer/colors";
@@ -21,91 +24,136 @@ import { colors } from "renderer/colors";
 export class RegionInput extends React.Component {
   state: {
     columns: { [id: string]: string };
-    regionFile: Array<Array<string>> | null;
+    regionFile: Array<Array<number>> | null;
+    error: string | null;
     boundaryStart: number;
     yValues: boolean;
   } = {
     regionFile: null,
     columns: {},
+    error: null,
     boundaryStart: 3,
     yValues: false
   };
 
-  async processNewFile(newFile: File) {
-    const regionFile = chain(
-      (await readAsText(newFile)).replace(/\b[\t ]+/g, ",")
-    )
+  parseRegionFile(fileText: string) {
+    const regionFile = chain(fileText.replace(/\b[\t ]+/g, ","))
       .split("\n")
+      .filter(row => row !== "")
       .map(line =>
         chain(line)
           .split(",")
           .map(trim)
+          .map(toNumber)
           .value()
       )
       .value();
-    const maxLength = (maxBy(regionFile, "length") as any).length;
-    const yValues = !isEqual(
-      slice(regionFile[0], 3),
-      slice(regionFile[0], 3).sort()
-    );
-    const columns = yValues
-      ? concat(
-          ["Item Label", "Condition Label", "-"],
-          map(range(maxLength - 3), (_, idx) =>
-            idx % 2
-              ? `Region ${Math.floor(idx / 2) + 1} Boundary Y`
-              : `Region ${Math.floor(idx / 2) + 1} Boundary X`
+
+    if (regionFile.length === 0) {
+      throw new Error("Error: Empty file.");
+    }
+
+    if (!isFinite(regionFile[0][0])) {
+      throw new Error("Error parsing region file.");
+    }
+    return regionFile;
+  }
+
+  async processNewFile(newFile: File) {
+    try {
+      const regionFile = this.parseRegionFile(await readAsText(newFile));
+      const maxLength = max(map(regionFile, line => line.length)) || 0;
+      const yValues = !isEqual(
+        slice(regionFile[0], 3),
+        sortBy(slice(regionFile[0], 3))
+      );
+      const columns = this.setColumnHeaders(
+        yValues,
+        3,
+        zipObject(
+          range(maxLength),
+          concat(
+            ["Item Label", "Condition Label", "-"],
+            map(range(maxLength - 3), _ => "-")
           )
         )
-      : concat(
-          ["Item Label", "Condition Label", "-"],
-          map(range(maxLength - 3), (_, idx) => `Region ${idx + 1} Boundary`)
-        );
-    this.setState({
-      regionFile,
-      yValues,
-      boundaryStart: 3,
-      columns: zipObject(range(maxLength), columns)
-    });
+      );
+      this.setState({ columns, regionFile, error: null, yValues });
+    } catch (e) {
+      this.setState({ error: e.message });
+    }
   }
 
   onColumnChange(columnKey: number, column: string) {
-    let boundaryStart = this.state.boundaryStart;
-    if (column === "Boundary Start") {
-      boundaryStart = columnKey;
-    } else if (columnKey >= boundaryStart) {
-      boundaryStart = columnKey + 1;
+    const boundaryStart =
+      column === "Region Boundary"
+        ? columnKey
+        : columnKey >= this.state.boundaryStart
+        ? columnKey + 1
+        : this.state.boundaryStart;
+
+    let columns = this.state.columns;
+    if (column === "-") {
+      columns[columnKey] = column;
+    } else if (column === "Condition Label" || column === "Item Label") {
+      columns = {
+        ...mapValues(this.state.columns, col => (col === column ? "-" : col)),
+        [columnKey]: column
+      };
     }
-    let columns = mapValues(this.state.columns, (col, key) => {
-      const keyInt = parseInt(key);
-      if (keyInt < columnKey) {
-        return col === column || includes(col, "Region") ? "-" : col;
-      } else {
-        if (
-          includes(["Item Label", "Condition Label", "-"], column) &&
-          keyInt === columnKey
-        ) {
-          return column;
-        } else if (col === column || keyInt < boundaryStart) {
-          return "-";
-        } else {
-          const region = this.state.yValues
-            ? Math.floor((keyInt - boundaryStart) / 2) + 1
-            : keyInt - boundaryStart + 1;
-          return `Region ${region} Boundary${
-            this.state.yValues
-              ? (keyInt - boundaryStart) % 2
-                ? " Y"
-                : " X"
-              : ""
-          }`;
-        }
-      }
-    });
-    this.setState({
-      columns,
-      boundaryStart
-    });
+    columns = this.setColumnHeaders(this.state.yValues, boundaryStart, columns);
+
+    this.setState({ columns, boundaryStart });
+  }
+
+  setColumnHeaders(
+    yValues: boolean,
+    boundaryStart: number,
+    columns: { [id: string]: string }
+  ) {
+    if (yValues) {
+      return mapValues(columns, (col, key) =>
+        parseInt(key) < boundaryStart
+          ? startsWith(col, "Region")
+            ? "-"
+            : col
+          : parseInt(key) % 2
+          ? `Region ${Math.floor((parseInt(key) - boundaryStart) / 2) +
+              1} Boundary Y`
+          : `Region ${Math.floor((parseInt(key) - boundaryStart) / 2) +
+              1} Boundary X`
+      );
+    } else {
+      return mapValues(columns, (col, key) =>
+        parseInt(key) < boundaryStart
+          ? startsWith(col, "Region")
+            ? "-"
+            : col
+          : `Region ${parseInt(key) - boundaryStart + 1} Boundary`
+      );
+    }
+  }
+
+  toggleYValues() {
+    if (
+      this.state.yValues &&
+      this.state.regionFile &&
+      !isEqual(
+        slice(this.state.regionFile[0], this.state.boundaryStart),
+        sortBy(slice(this.state.regionFile[0], this.state.boundaryStart))
+      )
+    ) {
+      this.setState({ error: "Boundary values must be increasing." });
+    } else {
+      this.setState({
+        yValues: !this.state.yValues,
+        columns: this.setColumnHeaders(
+          !this.state.yValues,
+          this.state.boundaryStart,
+          this.state.columns
+        )
+      });
+    }
   }
 
   render() {
@@ -117,6 +165,12 @@ export class RegionInput extends React.Component {
             e.target.files && (await this.processNewFile(e.target.files[0]))
           }
         />
+        <Switch
+          checked={this.state.yValues}
+          label="Y-Values"
+          onChange={() => this.toggleYValues()}
+        />
+        {this.state.error && <ErrorText>{this.state.error}</ErrorText>}
         {this.state.regionFile && (
           <TableWrapper>
             <StyledTable>
@@ -124,27 +178,29 @@ export class RegionInput extends React.Component {
                 <tr>
                   {map(this.state.regionFile[0], (col, key) => (
                     <th key={key}>
-                      <Select
-                        filterable={false}
-                        items={[
-                          "Item Label",
-                          "Condition Label",
-                          "Boundary Start",
-                          "-"
-                        ]}
-                        onItemSelect={() => {}}
-                        itemRenderer={(item: string) => (
-                          <MenuItem
-                            key={item}
-                            onClick={() => this.onColumnChange(key, item)}
-                            text={item}
-                          />
-                        )}
-                      >
-                        <StyledHeaderButton>
-                          {this.state.columns[key]}
-                        </StyledHeaderButton>
-                      </Select>
+                      {
+                        <Select
+                          filterable={false}
+                          items={[
+                            "Item Label",
+                            "Condition Label",
+                            "Boundary Start",
+                            "-"
+                          ]}
+                          onItemSelect={item => this.onColumnChange(key, item)}
+                          itemRenderer={(item: string) => (
+                            <MenuItem
+                              key={item}
+                              onClick={() => this.onColumnChange(key, item)}
+                              text={item}
+                            />
+                          )}
+                        >
+                          <StyledHeaderButton>
+                            {this.state.columns[key]}
+                          </StyledHeaderButton>
+                        </Select>
+                      }
                     </th>
                   ))}
                 </tr>
@@ -186,7 +242,7 @@ const TableWrapper = styled.div`
   margin: 40px;
 `;
 
-const StyledTable = styled.table`
+export const StyledTable = styled.table`
   margin: 0 auto;
   align-self: center;
   border-collapse: collapse;
@@ -214,3 +270,5 @@ const Wrapper = styled.div`
   width: 100vw;
   height: 100vh;
 `;
+
+export const ErrorText = styled.div``;
