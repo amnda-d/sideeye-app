@@ -1,0 +1,26 @@
+{
+  "extends": "./node_modules/electron-webpack/tsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "es2017",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "lib": ["es2018", "dom"],
+    "noImplicitThis": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "allowJs": false,
+    "jsx": "react",
+    "strict": true,
+    "paths": {
+      "renderer/*": ["src/renderer/*"],
+      "main/*": ["src/main/*"]
+    },
+    "types": ["node"]
+  },
+  "include": ["./src", "./@types"],
+  "exclude": ["node_modules"]
+}

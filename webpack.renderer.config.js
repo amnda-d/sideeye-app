@@ -1,39 +1,27 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 
 module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        loader: 'babel-loader',
-        options: {
-          presets: [
-            '@babel/flow',
-            [
-              '@babel/env',
-              {
-                targets: {
-                  node: 'current',
-                },
-              },
-            ],
-            '@babel/react',
-          ],
-        },
-      },
-    ],
-  },
+  // module: {
+  // rules: [
+  // { test: /\.tsx?$/, loader: "ts-loader" }
+  // {
+  //   test: /\.css$/,
+  //   use: ['style-loader', 'css-loader?-url'],
+  // },
+  // ]
+  // },
   resolve: {
-    extensions: ['.js', '.jsx'],
-    modules: ['node_modules'],
+    extensions: [".ts", ".tsx"],
+    modules: ["node_modules"],
     alias: {
-      renderer: path.resolve(__dirname, 'src/renderer'),
-    },
+      renderer: path.resolve(__dirname, "src/renderer")
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'src/renderer/index.html'),
-    }),
-  ],
+      template: path.resolve(__dirname, "src/renderer/index.html")
+    })
+  ]
 };

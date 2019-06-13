@@ -5,8 +5,8 @@ import child_process from 'child_process';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-let mainWindow;
-let py;
+let mainWindow: BrowserWindow | null;
+let py: child_process.ChildProcess;
 
 function createMainWindow() {
   const window = new BrowserWindow({
@@ -20,18 +20,18 @@ function createMainWindow() {
   }
 
   if (isDevelopment) {
-    child_process.exec(
-      `chmod +x ${path.join(__static, 'apidist/api/api')}`,
-      () => {
-        py = child_process.execFile(path.join(__static, 'apidist/api/api'));
-      },
-    );
+    child_process.exec(`chmod +x static/apidist/api/api`, () => {
+      py = child_process.execFile('static/apidist/api/api');
+    });
   } else {
     child_process.exec(
-      `chmod +x ${path.join(process.resourcesPath, 'static/apidist/api/api')}`,
+      `chmod +x ${path.join(
+        process.resourcesPath as string,
+        'static/apidist/api/api',
+      )}`,
       () => {
         py = child_process.execFile(
-          path.join(process.resourcesPath, 'static/apidist/api/api'),
+          path.join(process.resourcesPath as string, 'static/apidist/api/api'),
         );
       },
     );

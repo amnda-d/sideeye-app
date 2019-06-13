@@ -1,120 +1,110 @@
-// @flow
-import * as React from 'react';
-import { FileInput, HTMLTable, MenuItem, Button } from '@blueprintjs/core';
-import { Select } from '@blueprintjs/select';
-import { readAsText } from 'promise-file-reader';
-import styled from 'styled-components';
-import * as parse from 'csv-parse/lib/sync';
+import * as React from "react";
+import { FileInput, MenuItem } from "@blueprintjs/core";
+import { Select } from "@blueprintjs/select";
+import { readAsText } from "promise-file-reader";
+import styled from "styled-components";
 import {
   map,
-  findKey,
   slice,
   concat,
   range,
   zipObject,
   isEqual,
-  split,
   chain,
   trim,
   maxBy,
   includes,
-} from 'lodash';
-import { colors } from 'renderer/colors';
+  mapValues
+} from "lodash";
+import { colors } from "renderer/colors";
 
-export class RegionInput extends React.Component<
-  {},
-  {
-    regionFile: ?(string[][]),
-    columns: { [string]: string },
-    boundaryStart: number,
-    yValues: boolean,
-  },
-> {
-  constructor(props: {}) {
-    super(props);
-    this.state = {
-      regionFile: null,
-      columns: {},
-      boundaryStart: 3,
-      yValues: false,
-    };
-  }
+export class RegionInput extends React.Component {
+  state: {
+    columns: { [id: string]: string };
+    regionFile: Array<Array<string>> | null;
+    boundaryStart: number;
+    yValues: boolean;
+  } = {
+    regionFile: null,
+    columns: {},
+    boundaryStart: 3,
+    yValues: false
+  };
 
   async processNewFile(newFile: File) {
     const regionFile = chain(
-      (await readAsText(newFile)).replace(/\b[\t ]+/g, ','),
+      (await readAsText(newFile)).replace(/\b[\t ]+/g, ",")
     )
-      .split('\n')
+      .split("\n")
       .map(line =>
         chain(line)
-          .split(',')
+          .split(",")
           .map(trim)
-          .value(),
+          .value()
       )
       .value();
-    const maxLength = maxBy(regionFile, 'length').length;
+    const maxLength = (maxBy(regionFile, "length") as any).length;
     const yValues = !isEqual(
       slice(regionFile[0], 3),
-      slice(regionFile[0], 3).sort(),
+      slice(regionFile[0], 3).sort()
     );
     const columns = yValues
       ? concat(
-          ['Item Label', 'Condition Label', '-'],
-          map(
-            range(maxLength - 3),
-            (_, idx) =>
-              idx % 2
-                ? `Region ${Math.floor(idx / 2) + 1} Boundary Y`
-                : `Region ${Math.floor(idx / 2) + 1} Boundary X`,
-          ),
+          ["Item Label", "Condition Label", "-"],
+          map(range(maxLength - 3), (_, idx) =>
+            idx % 2
+              ? `Region ${Math.floor(idx / 2) + 1} Boundary Y`
+              : `Region ${Math.floor(idx / 2) + 1} Boundary X`
+          )
         )
       : concat(
-          ['Item Label', 'Condition Label', '-'],
-          map(range(maxLength - 3), (_, idx) => `Region ${idx + 1} Boundary`),
+          ["Item Label", "Condition Label", "-"],
+          map(range(maxLength - 3), (_, idx) => `Region ${idx + 1} Boundary`)
         );
     this.setState({
       regionFile,
       yValues,
       boundaryStart: 3,
-      columns: zipObject(range(maxLength), columns),
+      columns: zipObject(range(maxLength), columns)
     });
   }
 
   onColumnChange(columnKey: number, column: string) {
     let boundaryStart = this.state.boundaryStart;
-    if (column === 'Boundary Start') {
+    if (column === "Boundary Start") {
       boundaryStart = columnKey;
     } else if (columnKey >= boundaryStart) {
       boundaryStart = columnKey + 1;
     }
-    let columns = map(this.state.columns, (col, key) => {
-      if (parseInt(key) < columnKey) {
-        return col === column || includes(col, 'Region') ? '-' : col;
+    let columns = mapValues(this.state.columns, (col, key) => {
+      const keyInt = parseInt(key);
+      if (keyInt < columnKey) {
+        return col === column || includes(col, "Region") ? "-" : col;
       } else {
         if (
-          includes(['Item Label', 'Condition Label', '-'], column) &&
-          parseInt(key) === columnKey
+          includes(["Item Label", "Condition Label", "-"], column) &&
+          keyInt === columnKey
         ) {
           return column;
-        } else if (col === column || key < boundaryStart) {
-          return '-';
+        } else if (col === column || keyInt < boundaryStart) {
+          return "-";
         } else {
           const region = this.state.yValues
-            ? Math.floor((parseInt(key) - boundaryStart) / 2) + 1
-            : parseInt(key) - boundaryStart + 1;
+            ? Math.floor((keyInt - boundaryStart) / 2) + 1
+            : keyInt - boundaryStart + 1;
           return `Region ${region} Boundary${
             this.state.yValues
-              ? (parseInt(key) - boundaryStart) % 2
-                ? ' Y'
-                : ' X'
-              : ''
+              ? (keyInt - boundaryStart) % 2
+                ? " Y"
+                : " X"
+              : ""
           }`;
         }
       }
     });
     this.setState({
       columns,
-      boundaryStart,
+      boundaryStart
     });
   }
 
@@ -123,8 +113,8 @@ export class RegionInput extends React.Component<
       <Wrapper>
         <StyledFileInput
           text="Choose Region File..."
-          onInputChange={async e =>
-            await this.processNewFile(e.target.files[0])
+          onInputChange={async (e: React.ChangeEvent<HTMLInputElement>) =>
+            e.target.files && (await this.processNewFile(e.target.files[0]))
           }
         />
         {this.state.regionFile && (
@@ -137,12 +127,13 @@ export class RegionInput extends React.Component<
                       <Select
                         filterable={false}
                         items={[
-                          'Item Label',
-                          'Condition Label',
-                          'Boundary Start',
-                          '-',
+                          "Item Label",
+                          "Condition Label",
+                          "Boundary Start",
+                          "-"
                         ]}
-                        itemRenderer={item => (
+                        onItemSelect={() => {}}
+                        itemRenderer={(item: string) => (
                           <MenuItem
                             key={item}
                             onClick={() => this.onColumnChange(key, item)}
