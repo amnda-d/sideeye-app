@@ -1,13 +1,7 @@
 import * as React from "react";
-import { FormGroup } from "@blueprintjs/core";
 import { mount, ReactWrapper } from "enzyme";
 import { RegionConfigInput } from "renderer/config/region";
-import {
-  expectToExist,
-  waitForUpdate,
-  expectFormInput,
-  expectFormSwitch
-} from "test/utils";
+import { waitForUpdate, expectFormInput, expectFormSwitch } from "test/utils";
 
 describe("Region Configuration Input", () => {
   let wrapper: ReactWrapper;
@@ -15,13 +9,6 @@ describe("Region Configuration Input", () => {
   beforeEach(() => {
     wrapper = mount(<RegionConfigInput />);
   });
-
-  it("displays the Region fields", () =>
-    expectToExist(
-      wrapper
-        .find(FormGroup)
-        .filterWhere(e => e.prop("label") === "Region File Fields")
-    ));
 
   it("displays the condition field", () =>
     expectFormInput(wrapper, "condition", "Condition", "1"));

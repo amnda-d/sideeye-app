@@ -1,6 +1,6 @@
 import * as React from "react";
 import { FormGroup, NumericInput, Switch } from "@blueprintjs/core";
-import styled from "styled-components";
+import { FormWrapper } from "renderer/config";
 
 export class RegionConfigInput extends React.Component<
   {},
@@ -34,14 +34,12 @@ export class RegionConfigInput extends React.Component<
 
   render() {
     return (
-      <Wrapper>
-        <FormGroup label="Region File Fields">
-          {this.renderField("Condition", "condition")}
-          {this.renderField("Item ID", "item")}
-          {this.renderField("Boundary Start", "boundary")}
-          {this.renderSwitch("Includes Y Values", "includes_y")}
-        </FormGroup>
-      </Wrapper>
+      <FormWrapper>
+        {this.renderField("Condition", "condition")}
+        {this.renderField("Item ID", "item")}
+        {this.renderField("Boundary Start", "boundary")}
+        {this.renderSwitch("Includes Y Values", "includes_y")}
+      </FormWrapper>
     );
   }
 
@@ -49,6 +47,7 @@ export class RegionConfigInput extends React.Component<
     return (
       <FormGroup inline label={label}>
         <NumericInput
+          large
           id={id}
           value={this.state.configFile[id]}
           onValueChange={value => {
@@ -71,6 +70,7 @@ export class RegionConfigInput extends React.Component<
     return (
       <FormGroup inline label={label}>
         <Switch
+          large
           id={id}
           checked={this.state.configFile[id]}
           onChange={() => {
@@ -89,9 +89,3 @@ export class RegionConfigInput extends React.Component<
     );
   }
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;

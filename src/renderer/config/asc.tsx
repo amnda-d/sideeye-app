@@ -1,6 +1,6 @@
 import * as React from "react";
 import { FormGroup, NumericInput } from "@blueprintjs/core";
-import styled from "styled-components";
+import { FormWrapper } from "renderer/config";
 
 export class ASCConfigInput extends React.Component<
   {},
@@ -31,17 +31,15 @@ export class ASCConfigInput extends React.Component<
 
   render() {
     return (
-      <Wrapper>
-        <FormGroup label="ASC Parsing Fields">
-          {this.renderField(
-            "Fixation Minimum Cutoff (ms)",
-            "fixation_min_cutoff"
-          )}
-          {this.renderField("Maximum Saccade Duration (ms)", "max_saccade_dur")}
-          {this.renderField("Maximum Blink Count", "blink_max_count")}
-          {this.renderField("Maximum Blink Duration (ms)", "blink_max_dur")}
-        </FormGroup>
-      </Wrapper>
+      <FormWrapper>
+        {this.renderField(
+          "Fixation Minimum Cutoff (ms)",
+          "fixation_min_cutoff"
+        )}
+        {this.renderField("Maximum Saccade Duration (ms)", "max_saccade_dur")}
+        {this.renderField("Maximum Blink Count", "blink_max_count")}
+        {this.renderField("Maximum Blink Duration (ms)", "blink_max_dur")}
+      </FormWrapper>
     );
   }
 
@@ -49,6 +47,7 @@ export class ASCConfigInput extends React.Component<
     return (
       <FormGroup inline label={label}>
         <NumericInput
+          large
           id={id}
           value={this.state.configFile[id] || ""}
           onValueChange={value => {
@@ -67,9 +66,3 @@ export class ASCConfigInput extends React.Component<
     );
   }
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;

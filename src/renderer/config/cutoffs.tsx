@@ -1,6 +1,6 @@
 import * as React from "react";
 import { FormGroup, NumericInput, Switch } from "@blueprintjs/core";
-import styled from "styled-components";
+import { FormWrapper } from "renderer/config";
 
 export class CutoffsConfigInput extends React.Component<
   {},
@@ -29,20 +29,18 @@ export class CutoffsConfigInput extends React.Component<
 
   render() {
     return (
-      <Wrapper>
-        <FormGroup label="Fixation and Saccade Cutoffs">
-          {this.renderField("Fixation Minimum Cutoff (ms)", "min")}
-          {this.renderField("Fixation Maximim Cutoff (ms)", "max")}
-          {this.renderSwitch(
-            "Include cutoff fixations in calculated measures?",
-            "include_fixation"
-          )}
-          {this.renderSwitch(
-            "Include cutoff saccades in calculated measures?",
-            "include_saccades"
-          )}
-        </FormGroup>
-      </Wrapper>
+      <FormWrapper>
+        {this.renderField("Fixation Minimum Cutoff (ms)", "min")}
+        {this.renderField("Fixation Maximim Cutoff (ms)", "max")}
+        {this.renderSwitch(
+          "Include cutoff fixations in calculated measures?",
+          "include_fixation"
+        )}
+        {this.renderSwitch(
+          "Include cutoff saccades in calculated measures?",
+          "include_saccades"
+        )}
+      </FormWrapper>
     );
   }
 
@@ -50,6 +48,7 @@ export class CutoffsConfigInput extends React.Component<
     return (
       <FormGroup inline label={label}>
         <NumericInput
+          large
           id={id}
           value={this.state.configFile[id] || ""}
           onValueChange={value => {
@@ -73,6 +72,7 @@ export class CutoffsConfigInput extends React.Component<
       <FormGroup inline label={label}>
         <Switch
           id={id}
+          large
           checked={this.state.configFile[id]}
           onChange={() => {
             this.setState(
@@ -90,9 +90,3 @@ export class CutoffsConfigInput extends React.Component<
     );
   }
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;

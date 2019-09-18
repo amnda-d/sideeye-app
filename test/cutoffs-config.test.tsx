@@ -1,8 +1,7 @@
 import * as React from "react";
-import { FormGroup } from "@blueprintjs/core";
 import { mount, ReactWrapper } from "enzyme";
 import { CutoffsConfigInput } from "renderer/config/cutoffs";
-import { expectToExist, expectFormInput, expectFormSwitch } from "test/utils";
+import { expectFormInput, expectFormSwitch } from "test/utils";
 
 describe("ASC Configuration Input", () => {
   let wrapper: ReactWrapper;
@@ -10,13 +9,6 @@ describe("ASC Configuration Input", () => {
   beforeEach(() => {
     wrapper = mount(<CutoffsConfigInput />);
   });
-
-  it("displays the Cutoffs fields", () =>
-    expectToExist(
-      wrapper
-        .find(FormGroup)
-        .filterWhere(e => e.prop("label") === "Fixation and Saccade Cutoffs")
-    ));
 
   it("displays the min field", () =>
     expectFormInput(wrapper, "min", "Fixation Minimum Cutoff (ms)", "-1"));

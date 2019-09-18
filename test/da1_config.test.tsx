@@ -1,8 +1,7 @@
-import { FormGroup } from "@blueprintjs/core";
 import { mount, ReactWrapper } from "enzyme";
 import * as React from "react";
 import { DA1ConfigInput } from "renderer/config/da1";
-import { expectToExist, waitForUpdate, expectFormInput } from "test/utils";
+import { waitForUpdate, expectFormInput } from "test/utils";
 
 describe("Parser Configuration Input", () => {
   let wrapper: ReactWrapper;
@@ -10,11 +9,6 @@ describe("Parser Configuration Input", () => {
   beforeEach(() => {
     wrapper = mount(<DA1ConfigInput />);
   });
-
-  it("displays the DA1 fields", () =>
-    expectToExist(
-      wrapper.find(FormGroup).filterWhere(e => e.prop("label") === "DA1 Fields")
-    ));
 
   it("displays the index field", () =>
     expectFormInput(wrapper, "index", "Index", "0"));

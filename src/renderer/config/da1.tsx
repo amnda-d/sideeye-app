@@ -1,6 +1,6 @@
 import * as React from "react";
 import { FormGroup, NumericInput } from "@blueprintjs/core";
-import styled from "styled-components";
+import { FormWrapper } from "renderer/config";
 
 export class DA1ConfigInput extends React.Component<
   {},
@@ -32,15 +32,13 @@ export class DA1ConfigInput extends React.Component<
 
   render() {
     return (
-      <Wrapper>
-        <FormGroup label="DA1 Fields">
-          {this.renderField("Index", "index")}
-          {this.renderField("Condition", "condition")}
-          {this.renderField("Item ID", "number")}
-          {this.renderField("Fixation Start", "fixation_start")}
-          {this.renderField("Trial Duration", "time")}
-        </FormGroup>
-      </Wrapper>
+      <FormWrapper>
+        {this.renderField("Index", "index")}
+        {this.renderField("Condition", "condition")}
+        {this.renderField("Item ID", "number")}
+        {this.renderField("Fixation Start", "fixation_start")}
+        {this.renderField("Trial Duration", "time")}
+      </FormWrapper>
     );
   }
 
@@ -48,6 +46,7 @@ export class DA1ConfigInput extends React.Component<
     return (
       <FormGroup inline label={label}>
         <NumericInput
+          large
           id={id}
           value={this.state.configFile[id]}
           onValueChange={value => {
@@ -66,9 +65,3 @@ export class DA1ConfigInput extends React.Component<
     );
   }
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
