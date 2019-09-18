@@ -120,7 +120,7 @@ describe("Region Input", () => {
       await selectDropdownValue(
         wrapper,
         wrapper.find(Select).at(1),
-        "Region Boundary"
+        "Boundary Start"
       );
       expect(wrapper.find(Select).map(th => th.text())).toEqual([
         "Item Label",
@@ -144,10 +144,10 @@ describe("Region Input", () => {
           "Item Label",
           "Condition Label",
           "-",
-          "Region 1 Boundary Y",
           "Region 1 Boundary X",
-          "Region 2 Boundary Y",
-          "Region 2 Boundary X"
+          "Region 1 Boundary Y",
+          "Region 2 Boundary X",
+          "Region 2 Boundary Y"
         ]));
     });
   });
@@ -216,12 +216,12 @@ describe("Region Input", () => {
         "Item Label",
         "Condition Label",
         "-",
-        "Region 1 Boundary Y",
         "Region 1 Boundary X",
-        "Region 2 Boundary Y",
+        "Region 1 Boundary Y",
         "Region 2 Boundary X",
-        "Region 3 Boundary Y",
-        "Region 3 Boundary X"
+        "Region 2 Boundary Y",
+        "Region 3 Boundary X",
+        "Region 3 Boundary Y"
       ]));
 
     describe("De-selecting the Y-values toggle", () => {

@@ -1,8 +1,9 @@
-import React from "react";
-// import ReactDOM from "react-dom";
-import { MemoryRouter, Route } from "react-router";
+import * as React from "react";
 import styled from "styled-components";
 import { RegionInput } from "renderer/region-input";
+import { ConfigInput } from "renderer/config";
+import { Navigation } from "renderer/navigation";
+import { Title } from "renderer/title";
 import { colors } from "renderer/colors";
 
 // import getRequest from "renderer/get_request";
@@ -33,13 +34,22 @@ import { colors } from "renderer/colors";
 //   }
 // }
 
-const App = () => (
-  <MemoryRouter>
-    <Wrapper>
-      <Route exact path="/" component={RegionInput} />
-    </Wrapper>
-  </MemoryRouter>
-);
+class App extends React.Component<{}, { page: string }> {
+  state = {
+    page: "/"
+  };
+
+  render() {
+    return (
+      <Wrapper>
+        <Navigation updatePage={page => this.setState({ page })} />
+        {this.state.page === "/" && <Title />}
+        {this.state.page === "/region" && <RegionInput />}
+        {this.state.page === "/config" && <ConfigInput />}
+      </Wrapper>
+    );
+  }
+}
 
 const Wrapper = styled.div`
   color: ${colors.text};

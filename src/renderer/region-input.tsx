@@ -86,7 +86,7 @@ export class RegionInput extends React.Component {
 
   onColumnChange(columnKey: number, column: string) {
     const boundaryStart =
-      column === "Region Boundary"
+      column === "Boundary Start"
         ? columnKey
         : columnKey >= this.state.boundaryStart
         ? columnKey + 1
@@ -103,7 +103,7 @@ export class RegionInput extends React.Component {
     }
     columns = this.setColumnHeaders(this.state.yValues, boundaryStart, columns);
 
-    this.setState({ columns, boundaryStart });
+    this.setState({ columns, boundaryStart, error: null });
   }
 
   setColumnHeaders(
@@ -117,7 +117,7 @@ export class RegionInput extends React.Component {
           ? startsWith(col, "Region")
             ? "-"
             : col
-          : parseInt(key) % 2
+          : (parseInt(key) - boundaryStart) % 2
           ? `Region ${Math.floor((parseInt(key) - boundaryStart) / 2) +
               1} Boundary Y`
           : `Region ${Math.floor((parseInt(key) - boundaryStart) / 2) +
@@ -151,7 +151,8 @@ export class RegionInput extends React.Component {
           !this.state.yValues,
           this.state.boundaryStart,
           this.state.columns
-        )
+        ),
+        error: null
       });
     }
   }

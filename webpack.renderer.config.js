@@ -12,6 +12,9 @@ module.exports = {
   // },
   // ]
   // },
+  devServer: {
+    historyApiFallback: true
+  },
   resolve: {
     extensions: [".ts", ".tsx"],
     modules: ["node_modules"],

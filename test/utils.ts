@@ -1,4 +1,5 @@
 import { ISelectProps } from "@blueprintjs/select";
+import { FormGroup } from "@blueprintjs/core";
 import * as React from "react";
 import { ReactWrapper } from "enzyme";
 import { some, isArray } from "lodash";
@@ -46,3 +47,20 @@ export async function waitForUpdate(application: ReactWrapper<any>, time = 0) {
   await wait(time);
   await application.update();
 }
+
+export const expectFormInput = (
+  wrapper: ReactWrapper,
+  id: string,
+  label: string,
+  value: any
+) => {
+  expectToExist(
+    wrapper.find(FormGroup).filterWhere(e => e.prop("label") === label)
+  );
+  expect(
+    wrapper
+      .find("input")
+      .filterWhere(e => e.prop("id") === id)
+      .prop("value")
+  ).toEqual(value);
+};

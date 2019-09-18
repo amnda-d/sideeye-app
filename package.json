@@ -4,22 +4,20 @@
   "license": "MIT",
   "scripts": {
     "dev": "yarn pyinstaller && electron-webpack dev",
-    "compile": "yarn pyinstaller && electron-webpack",
+    "compile": "electron-webpack && yarn pyinstaller",
     "dist": "yarn compile && electron-builder",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
-    "pyinstaller": "rm -rf static/apidist && pyinstaller --hidden-import flask --hidden-import sideeye api/api.py --distpath static/apidist"
+    "pyinstaller": "rm -rf static/apidist && pyinstaller --add-data 'dist/renderer:renderer' --hidden-import flask --hidden-import sideeye api/api.py --distpath static/apidist"
   },
   "dependencies": {
     "@blueprintjs/core": "^3.7.0",
     "@blueprintjs/select": "^3.2.1",
     "csv-parse": "^3.1.3",
-    "history": "^4.7.2",
     "html-webpack-plugin": "^3.2.0",
     "lodash": "^4.17.11",
     "promise-file-reader": "^1.0.2",
     "react": "^16.6.0",
-    "react-dom": "^16.6.0",
-    "react-router": "^4.3.1",
+    "react-dom": "^16.9.0",
     "source-map-support": "^0.5.9",
     "styled-components": "^4.0.3",
     "upath": "^1.0.5"
