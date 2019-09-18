@@ -1,8 +1,13 @@
 import * as React from "react";
-import { FormGroup, Switch } from "@blueprintjs/core";
+import { FormGroup } from "@blueprintjs/core";
 import { mount, ReactWrapper } from "enzyme";
 import { RegionConfigInput } from "renderer/config/region";
-import { expectToExist, waitForUpdate, expectFormInput } from "test/utils";
+import {
+  expectToExist,
+  waitForUpdate,
+  expectFormInput,
+  expectFormSwitch
+} from "test/utils";
 
 describe("Region Configuration Input", () => {
   let wrapper: ReactWrapper;
@@ -27,19 +32,8 @@ describe("Region Configuration Input", () => {
   it("displays the boundary start field", () =>
     expectFormInput(wrapper, "boundary", "Boundary Start", "3"));
 
-  it("displays the includes y values field", () => {
-    expectToExist(
-      wrapper
-        .find(FormGroup)
-        .filterWhere(e => e.prop("label") === "Includes Y Values")
-    );
-    expect(
-      wrapper
-        .find(Switch)
-        .filterWhere(e => e.prop("id") === "includes_y")
-        .prop("checked")
-    ).toEqual(false);
-  });
+  it("displays the includes y values field", () =>
+    expectFormSwitch(wrapper, "includes_y", "Includes Y Values", false));
 
   describe("updating a value", () => {
     beforeEach(async () => {

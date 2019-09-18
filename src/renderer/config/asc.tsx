@@ -2,7 +2,7 @@ import * as React from "react";
 import { FormGroup, NumericInput } from "@blueprintjs/core";
 import styled from "styled-components";
 
-export class DA1ConfigInput extends React.Component<
+export class ASCConfigInput extends React.Component<
   {},
   {
     configFile: { [key: string]: any };
@@ -12,33 +12,34 @@ export class DA1ConfigInput extends React.Component<
     super(props);
 
     const existingConfig = JSON.parse(
-      localStorage.getItem("da1_fields") || "{}"
+      localStorage.getItem("asc_parsing") || "{}"
     );
 
     this.state = {
       configFile: {
-        index: existingConfig.index || 0,
-        condition: existingConfig.condition || 1,
-        number: existingConfig.number || 2,
-        fixation_start: existingConfig.fixation_start || 8,
-        time: existingConfig.time || -1
+        fixation_min_cutoff: existingConfig.fixation_min_cutoff || false,
+        max_saccade_dur: existingConfig.max_saccade_dur || false,
+        blink_max_count: existingConfig.blink_max_count || false,
+        blink_max_dur: existingConfig.blink_max_dur || false
       }
     };
   }
 
   componentWillUnmount() {
-    localStorage.setItem("da1_fields", JSON.stringify(this.state.configFile));
+    localStorage.setItem("asc_parsing", JSON.stringify(this.state.configFile));
   }
 
   render() {
     return (
       <Wrapper>
-        <FormGroup label="DA1 Fields">
-          {this.renderField("Index", "index")}
-          {this.renderField("Condition", "condition")}
-          {this.renderField("Item ID", "number")}
-          {this.renderField("Fixation Start", "fixation_start")}
-          {this.renderField("Trial Duration", "time")}
+        <FormGroup label="ASC Parsing Fields">
+          {this.renderField(
+            "Fixation Minimum Cutoff (ms)",
+            "fixation_min_cutoff"
+          )}
+          {this.renderField("Maximum Saccade Duration (ms)", "max_saccade_dur")}
+          {this.renderField("Maximum Blink Count", "blink_max_count")}
+          {this.renderField("Maximum Blink Duration (ms)", "blink_max_dur")}
         </FormGroup>
       </Wrapper>
     );
@@ -49,7 +50,7 @@ export class DA1ConfigInput extends React.Component<
       <FormGroup inline label={label}>
         <NumericInput
           id={id}
-          value={this.state.configFile[id]}
+          value={this.state.configFile[id] || ""}
           onValueChange={value => {
             this.setState(
               {
