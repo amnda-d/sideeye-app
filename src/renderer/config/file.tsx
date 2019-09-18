@@ -18,6 +18,7 @@ export class FileConfigInput extends React.Component<
       localStorage.getItem("region_config") || "{}"
     );
     const asc_parsing = JSON.parse(localStorage.getItem("asc_parsing") || "{}");
+    const cutoffs = JSON.parse(localStorage.getItem("cutoffs") || "{}");
 
     this.state = {
       configFile: {
@@ -39,6 +40,12 @@ export class FileConfigInput extends React.Component<
           blink_max_count: asc_parsing.blink_max_count || false,
           max_saccade_dur: asc_parsing.max_saccade_dur || false,
           fixation_min_cutoff: asc_parsing.fixation_min_cutoff || false
+        },
+        cutoffs: {
+          min: cutoffs.min || -1,
+          max: cutoffs.max || -1,
+          include_fixation: cutoffs.include_fixation || false,
+          include_saccades: cutoffs.include_saccades || false
         }
       },
       error: null
@@ -54,6 +61,14 @@ export class FileConfigInput extends React.Component<
       "region_fields",
       JSON.stringify(this.state.configFile.region_fields)
     );
+    localStorage.setItem(
+      "asc_parsing",
+      JSON.stringify(this.state.configFile.asc_parsing)
+    );
+    localStorage.setItem(
+      "cutoffs",
+      JSON.stringify(this.state.configFile.cutoffs)
+    );
   }
 
   async processNewFile(newFile: File) {
@@ -62,24 +77,55 @@ export class FileConfigInput extends React.Component<
       this.setState({
         configFile: {
           da1_fields: {
-            index: configJSON.da1_fields.index || 0,
-            condition: configJSON.da1_fields.condition || 1,
-            number: configJSON.da1_fields.number || 2,
-            fixation_start: configJSON.da1_fields.fixation_start || 8,
-            time: configJSON.da1_fields.time || -1
+            index: configJSON.da1_fields ? configJSON.da1_fields.index || 0 : 0,
+            condition: configJSON.da1_fields
+              ? configJSON.da1_fields.condition || 1
+              : 1,
+            number: configJSON.da1_fields
+              ? configJSON.da1_fields.number || 2
+              : 2,
+            fixation_start: configJSON.da1_fields
+              ? configJSON.da1_fields.fixation_start || 8
+              : 8,
+            time: configJSON.da1_fields ? configJSON.da1_fields.time || -1 : -1
           },
           region_fields: {
-            number: configJSON.region_fields.number || 0,
-            condition: configJSON.region_fields.condition || 1,
-            boundaries_start: configJSON.region_fields.boundaries_start || 3,
-            includes_y: configJSON.region_fields.includes_y || false
+            number: configJSON.region_fields
+              ? configJSON.region_fields.number || 0
+              : 0,
+            condition: configJSON.region_fields
+              ? configJSON.region_fields.condition || 1
+              : 1,
+            boundaries_start: configJSON.region_fields
+              ? configJSON.region_fields.boundaries_start || 3
+              : 3,
+            includes_y: configJSON.region_fields
+              ? configJSON.region_fields.includes_y || false
+              : false
           },
           asc_parsing: {
-            blink_max_dur: configJSON.asc_parsing.blink_max_dur || false,
-            blink_max_count: configJSON.asc_parsing.blink_max_count || false,
-            max_saccade_dur: configJSON.asc_parsing.max_saccade_dur || false,
-            fixation_min_cutoff:
-              configJSON.asc_parsing.fixation_min_cutoff || false
+            blink_max_dur: configJSON.asc_parsing
+              ? configJSON.asc_parsing.blink_max_dur || false
+              : false,
+            blink_max_count: configJSON.asc_parsing
+              ? configJSON.asc_parsing.blink_max_count || false
+              : false,
+            max_saccade_dur: configJSON.asc_parsing
+              ? configJSON.asc_parsing.max_saccade_dur || false
+              : false,
+            fixation_min_cutoff: configJSON.asc_parsing
+              ? configJSON.asc_parsing.fixation_min_cutoff || false
+              : false
+          },
+          cutoffs: {
+            min: configJSON.cutoffs ? configJSON.cutoffs.min || -1 : -1,
+            max: configJSON.cutoffs ? configJSON.cutoffs.max || -1 : -1,
+            include_fixation: configJSON.cutoffs
+              ? configJSON.cutoffs.include_fixation || false
+              : false,
+            include_saccades: configJSON.cutoffs
+              ? configJSON.cutoffs.include_saccades || false
+              : false
           }
         },
         error: null

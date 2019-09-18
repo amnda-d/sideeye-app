@@ -28,7 +28,7 @@ describe("Parser Configuration Input", () => {
             files: [
               new File(
                 [
-                  '{"wide_format": true, "da1_fields": { "index": 0, "condition": 1, "time": 3, "fixation_start": 4 }, "region_fields": { "condition": 10, "boundaries_start": 3, "includes_y": false }, "asc_parsing": {"blink_max_dur": 100}}'
+                  '{"wide_format": true, "da1_fields": { "index": 0, "condition": 1, "time": 3, "fixation_start": 4 }, "region_fields": { "condition": 10, "boundaries_start": 3, "includes_y": false }, "asc_parsing": {"blink_max_dur": 100}, "cutoffs": {"min": 1000}}'
                 ],
                 "region.cnt"
               )
@@ -66,6 +66,16 @@ describe("Parser Configuration Input", () => {
           blink_max_count: false,
           max_saccade_dur: false,
           fixation_min_cutoff: false
+        }
+      }));
+
+    it("updates the min cutoff value", () =>
+      expect(wrapper.state("configFile")).toMatchObject({
+        cutoffs: {
+          min: 1000,
+          max: -1,
+          include_fixation: false,
+          include_saccades: false
         }
       }));
   });

@@ -11,7 +11,7 @@ describe("ASC Configuration Input", () => {
     wrapper = mount(<ASCConfigInput />);
   });
 
-  it("displays the Region fields", () =>
+  it("displays the ASC Parsing fields", () =>
     expectToExist(
       wrapper
         .find(FormGroup)

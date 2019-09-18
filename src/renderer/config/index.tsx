@@ -1,5 +1,6 @@
 import * as React from "react";
 import { ASCConfigInput } from "renderer/config/asc";
+import { CutoffsConfigInput } from "renderer/config/cutoffs";
 import { DA1ConfigInput } from "renderer/config/da1";
 import { RegionConfigInput } from "renderer/config/region";
 import { FileConfigInput } from "renderer/config/file";
@@ -9,7 +10,8 @@ export class ConfigInput extends React.Component {
     displayConfig: false,
     displayRegion: false,
     displayDA1: false,
-    displayASC: false
+    displayASC: false,
+    displayCutoffs: false
   };
 
   render() {
@@ -45,6 +47,14 @@ export class ConfigInput extends React.Component {
               ASC Parsing Configuration
             </div>
             {this.state.displayASC && <ASCConfigInput />}
+            <div
+              onClick={() =>
+                this.setState({ displayCutoffs: !this.state.displayCutoffs })
+              }
+            >
+              Fixation and Saccade Cutoffs
+            </div>
+            {this.state.displayCutoffs && <CutoffsConfigInput />}
           </div>
         )}
       </div>

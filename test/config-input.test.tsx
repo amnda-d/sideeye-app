@@ -1,6 +1,7 @@
 import * as React from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { ConfigInput } from "renderer/config";
+import { CutoffsConfigInput } from "renderer/config/cutoffs";
 import { FileConfigInput } from "renderer/config/file";
 import { RegionConfigInput } from "renderer/config/region";
 import { DA1ConfigInput } from "renderer/config/da1";
@@ -78,6 +79,18 @@ describe("Configuration Input", () => {
 
       it("displays the ASCConfigInput", () =>
         expectToExist(wrapper.find(ASCConfigInput)));
+    });
+
+    describe("clicking on Cutoffs Configuration", () => {
+      beforeEach(() =>
+        wrapper
+          .find("div")
+          .filterWhere(e => e.text() === "Fixation and Saccade Cutoffs")
+          .simulate("click", { button: 0 })
+      );
+
+      it("displays the CutoffsConfigInput", () =>
+        expectToExist(wrapper.find(CutoffsConfigInput)));
     });
   });
 });
