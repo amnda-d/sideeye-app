@@ -14,7 +14,7 @@ describe("ASC Configuration Input", () => {
     expectFormInput(
       wrapper,
       "fixation_min_cutoff",
-      "Fixation Minimum Cutoff (ms)",
+      "Fixation Minimum Cutoff",
       ""
     ));
 
@@ -22,7 +22,7 @@ describe("ASC Configuration Input", () => {
     expectFormInput(
       wrapper,
       "max_saccade_dur",
-      "Maximum Saccade Duration (ms)",
+      "Maximum Saccade Duration",
       ""
     ));
 
@@ -30,10 +30,5 @@ describe("ASC Configuration Input", () => {
     expectFormInput(wrapper, "blink_max_count", "Maximum Blink Count", ""));
 
   it("displays the blink_max_dur field", () =>
-    expectFormInput(
-      wrapper,
-      "blink_max_dur",
-      "Maximum Blink Duration (ms)",
-      ""
-    ));
+    expectFormInput(wrapper, "blink_max_dur", "Maximum Blink Duration", ""));
 });

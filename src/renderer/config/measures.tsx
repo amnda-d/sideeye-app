@@ -1,15 +1,12 @@
 import * as React from "react";
-import {
-  FormGroup,
-  Checkbox,
-  NumericInput,
-  InputGroup,
-  Switch
-} from "@blueprintjs/core";
+import { Checkbox } from "@blueprintjs/core";
 import { map, set, get } from "lodash";
 import styled from "styled-components";
 import { FormWrapper } from "renderer/config";
 import { colors } from "renderer/colors";
+import { NumberInput } from "renderer/components/number-input";
+import { TextInput } from "renderer/components/text-input";
+import { SwitchInput } from "renderer/components/switch-input";
 
 const regionMeasures = {
   "region_measures.skip": "Skip",
@@ -126,6 +123,7 @@ export class MeasuresConfigInput extends React.Component<
 
   renderMeasure(label: string, id: string) {
     const excluded = get(this.state, `configFile.${id}.exclude`) || false;
+    const use_cutoff = get(this.state, `configFile.${id}.use_cutoff`) || false;
     return (
       <MeasureWrapper key={id}>
         <Checkbox
@@ -140,66 +138,43 @@ export class MeasuresConfigInput extends React.Component<
         />
         {!excluded && (
           <MeasureConfig>
-            {this.renderTextField(
-              "Output Header",
-              `configFile.${id}.header`,
-              id.split(".")[1]
+            <TextInput
+              label="Output Header"
+              id={`configFile.${id}.header`}
+              placeholder={id.split(".")[1]}
+              value={get(this.state, `configFile.${id}.header`) || ""}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                this.setState(
+                  set(this.state, `configFile.${id}.header`, e.target.value)
+                );
+              }}
+            />
+            <SwitchInput
+              label="Use cutoff?"
+              id={`configFile.${id}.use_cutoff`}
+              checked={use_cutoff}
+              onChange={() => {
+                this.setState(
+                  set(this.state, `configFile.${id}.use_cutoff`, !use_cutoff)
+                );
+              }}
+            />
+            {get(this.state, `configFile.${id}.use_cutoff`) && (
+              <NumberInput
+                label="Cutoff value"
+                id={`configFile.${id}.cutoff`}
+                units="ms"
+                value={get(this.state, id)}
+                onValueChange={value => {
+                  this.setState(set(this.state, id, value), () =>
+                    console.log(this.state)
+                  );
+                }}
+              />
             )}
-            {this.renderSwitch("Use cutoff?", `configFile.${id}.use_cutoff`)}
-            {get(this.state, `configFile.${id}.use_cutoff`) &&
-              this.renderField("Cutoff value", `configFile.${id}.cutoff`)}
           </MeasureConfig>
         )}
       </MeasureWrapper>
-    );
-  }
-
-  renderField(label: string, id: string) {
-    return (
-      <FormGroup inline label={label}>
-        <StyledNumericInput
-          id={id}
-          rightElement={<NumberLabel>ms</NumberLabel>}
-          buttonPosition="none"
-          placeholder={"0"}
-          value={get(this.state, id)}
-          onValueChange={value => {
-            this.setState(set(this.state, id, value), () =>
-              console.log(this.state)
-            );
-          }}
-        />
-      </FormGroup>
-    );
-  }
-
-  renderTextField(label: string, id: string, placeholder: string = "") {
-    return (
-      <FormGroup inline label={label}>
-        <StyledInputGroup
-          id={id}
-          placeholder={placeholder}
-          value={get(this.state, id) || ""}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            this.setState(set(this.state, id, e.target.value));
-          }}
-        />
-      </FormGroup>
-    );
-  }
-
-  renderSwitch(label: string, id: string) {
-    const checked = get(this.state, id);
-    return (
-      <FormGroup inline label={label}>
-        <Switch
-          id={id}
-          checked={checked || false}
-          onChange={() => {
-            this.setState(set(this.state, id, checked ? !checked : true));
-          }}
-        />
-      </FormGroup>
     );
   }
 }
@@ -232,20 +207,4 @@ const MeasureConfig = styled.div`
     padding-right: 20px;
     margin-bottom: 0;
   }
-`;
-
-const StyledInputGroup = styled(InputGroup)`
-  width: 300px;
-`;
-
-const StyledNumericInput = styled(NumericInput)`
-  .bp3-input-group {
-    width: 100px;
-  }
-`;
-
-const NumberLabel = styled.div`
-  line-height: 30px;
-  color: ${colors.gray};
-  padding-right: 8px;
 `;

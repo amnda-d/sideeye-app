@@ -1,6 +1,6 @@
 import * as React from "react";
-import { FormGroup, NumericInput } from "@blueprintjs/core";
 import { FormWrapper } from "renderer/config";
+import { NumberInput } from "renderer/components/number-input";
 
 export class ASCConfigInput extends React.Component<
   {},
@@ -33,36 +33,36 @@ export class ASCConfigInput extends React.Component<
     return (
       <FormWrapper>
         {this.renderField(
-          "Fixation Minimum Cutoff (ms)",
-          "fixation_min_cutoff"
+          "Fixation Minimum Cutoff",
+          "fixation_min_cutoff",
+          "ms"
         )}
-        {this.renderField("Maximum Saccade Duration (ms)", "max_saccade_dur")}
-        {this.renderField("Maximum Blink Count", "blink_max_count")}
-        {this.renderField("Maximum Blink Duration (ms)", "blink_max_dur")}
+        {this.renderField("Maximum Saccade Duration", "max_saccade_dur", "ms")}
+        {this.renderField("Maximum Blink Count", "blink_max_count", "")}
+        {this.renderField("Maximum Blink Duration", "blink_max_dur", "ms")}
       </FormWrapper>
     );
   }
 
-  renderField(label: string, id: string) {
+  renderField(label: string, id: string, units: string) {
     return (
-      <FormGroup inline label={label}>
-        <NumericInput
-          large
-          id={id}
-          value={this.state.configFile[id] || ""}
-          onValueChange={value => {
-            this.setState(
-              {
-                configFile: {
-                  ...this.state.configFile,
-                  [id]: value
-                }
-              },
-              () => console.log(this.state)
-            );
-          }}
-        />
-      </FormGroup>
+      <NumberInput
+        label={label}
+        id={id}
+        units={units}
+        value={this.state.configFile[id] || ""}
+        onValueChange={value => {
+          this.setState(
+            {
+              configFile: {
+                ...this.state.configFile,
+                [id]: value
+              }
+            },
+            () => console.log(this.state)
+          );
+        }}
+      />
     );
   }
 }

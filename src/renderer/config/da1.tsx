@@ -1,6 +1,6 @@
 import * as React from "react";
-import { FormGroup, NumericInput } from "@blueprintjs/core";
 import { FormWrapper } from "renderer/config";
+import { NumberInput } from "renderer/components/number-input";
 
 export class DA1ConfigInput extends React.Component<
   {},
@@ -44,24 +44,27 @@ export class DA1ConfigInput extends React.Component<
 
   renderField(label: string, id: string) {
     return (
-      <FormGroup inline label={label}>
-        <NumericInput
-          large
-          id={id}
-          value={this.state.configFile[id]}
-          onValueChange={value => {
-            this.setState(
-              {
-                configFile: {
-                  ...this.state.configFile,
-                  [id]: value
-                }
-              },
-              () => console.log(this.state)
-            );
-          }}
-        />
-      </FormGroup>
+      <NumberInput
+        label={label}
+        id={id}
+        units={""}
+        value={
+          this.state.configFile[id] !== undefined
+            ? this.state.configFile[id]
+            : ""
+        }
+        onValueChange={value => {
+          this.setState(
+            {
+              configFile: {
+                ...this.state.configFile,
+                [id]: value
+              }
+            },
+            () => console.log(this.state)
+          );
+        }}
+      />
     );
   }
 }

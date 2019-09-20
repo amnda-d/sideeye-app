@@ -1,6 +1,7 @@
 import * as React from "react";
-import { FormGroup, NumericInput, Switch } from "@blueprintjs/core";
 import { FormWrapper } from "renderer/config";
+import { NumberInput } from "renderer/components/number-input";
+import { SwitchInput } from "renderer/components/switch-input";
 
 export class CutoffsConfigInput extends React.Component<
   {},
@@ -30,8 +31,8 @@ export class CutoffsConfigInput extends React.Component<
   render() {
     return (
       <FormWrapper>
-        {this.renderField("Fixation Minimum Cutoff (ms)", "min")}
-        {this.renderField("Fixation Maximim Cutoff (ms)", "max")}
+        {this.renderField("Fixation Minimum Cutoff", "min", "ms")}
+        {this.renderField("Fixation Maximim Cutoff", "max", "ms")}
         {this.renderSwitch(
           "Include cutoff fixations in calculated measures?",
           "include_fixation"
@@ -44,49 +45,50 @@ export class CutoffsConfigInput extends React.Component<
     );
   }
 
-  renderField(label: string, id: string) {
+  renderField(label: string, id: string, units: string) {
     return (
-      <FormGroup inline label={label}>
-        <NumericInput
-          large
-          id={id}
-          value={this.state.configFile[id] || ""}
-          onValueChange={value => {
-            this.setState(
-              {
-                configFile: {
-                  ...this.state.configFile,
-                  [id]: value
-                }
-              },
-              () => console.log(this.state)
-            );
-          }}
-        />
-      </FormGroup>
+      <NumberInput
+        label={label}
+        id={id}
+        units={units}
+        value={
+          this.state.configFile[id] !== undefined
+            ? this.state.configFile[id]
+            : ""
+        }
+        onValueChange={value => {
+          this.setState(
+            {
+              configFile: {
+                ...this.state.configFile,
+                [id]: value
+              }
+            },
+            () => console.log(this.state)
+          );
+        }}
+      />
     );
   }
 
   renderSwitch(label: string, id: string) {
     return (
-      <FormGroup inline label={label}>
-        <Switch
-          id={id}
-          large
-          checked={this.state.configFile[id]}
-          onChange={() => {
-            this.setState(
-              {
-                configFile: {
-                  ...this.state.configFile,
-                  [id]: !this.state.configFile[id]
-                }
-              },
-              () => console.log(this.state)
-            );
-          }}
-        />
-      </FormGroup>
+      <SwitchInput
+        label={label}
+        id={id}
+        checked={this.state.configFile[id]}
+        onChange={() => {
+          this.setState(
+            {
+              configFile: {
+                ...this.state.configFile,
+                [id]: !this.state.configFile[id]
+              }
+            },
+            () => console.log(this.state)
+          );
+        }}
+      />
     );
   }
 }

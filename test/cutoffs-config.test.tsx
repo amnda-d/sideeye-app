@@ -11,10 +11,10 @@ describe("ASC Configuration Input", () => {
   });
 
   it("displays the min field", () =>
-    expectFormInput(wrapper, "min", "Fixation Minimum Cutoff (ms)", "-1"));
+    expectFormInput(wrapper, "min", "Fixation Minimum Cutoff", "-1"));
 
   it("displays the max field", () =>
-    expectFormInput(wrapper, "max", "Fixation Maximim Cutoff (ms)", "-1"));
+    expectFormInput(wrapper, "max", "Fixation Maximim Cutoff", "-1"));
 
   it("displays the include_fixation field", () =>
     expectFormSwitch(

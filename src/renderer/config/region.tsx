@@ -1,6 +1,7 @@
 import * as React from "react";
-import { FormGroup, NumericInput, Switch } from "@blueprintjs/core";
 import { FormWrapper } from "renderer/config";
+import { NumberInput } from "renderer/components/number-input";
+import { SwitchInput } from "renderer/components/switch-input";
 
 export class RegionConfigInput extends React.Component<
   {},
@@ -38,54 +39,46 @@ export class RegionConfigInput extends React.Component<
         {this.renderField("Condition", "condition")}
         {this.renderField("Item ID", "item")}
         {this.renderField("Boundary Start", "boundary")}
-        {this.renderSwitch("Includes Y Values", "includes_y")}
+        <SwitchInput
+          label={"Includes Y Values"}
+          id={"includes_y"}
+          checked={this.state.configFile.includes_y}
+          onChange={() => {
+            this.setState({
+              configFile: {
+                ...this.state.configFile,
+                includes_y: !this.state.configFile.includes_y
+              }
+            });
+          }}
+        />
       </FormWrapper>
     );
   }
 
   renderField(label: string, id: string) {
     return (
-      <FormGroup inline label={label}>
-        <NumericInput
-          large
-          id={id}
-          value={this.state.configFile[id]}
-          onValueChange={value => {
-            this.setState(
-              {
-                configFile: {
-                  ...this.state.configFile,
-                  [id]: value
-                }
-              },
-              () => console.log(this.state)
-            );
-          }}
-        />
-      </FormGroup>
-    );
-  }
-
-  renderSwitch(label: string, id: string) {
-    return (
-      <FormGroup inline label={label}>
-        <Switch
-          large
-          id={id}
-          checked={this.state.configFile[id]}
-          onChange={() => {
-            this.setState(
-              {
-                configFile: {
-                  ...this.state.configFile,
-                  [id]: !this.state.configFile[id]
-                }
-              },
-              () => console.log(this.state)
-            );
-          }}
-        />
-      </FormGroup>
+      <NumberInput
+        label={label}
+        id={id}
+        units=""
+        value={
+          this.state.configFile[id] !== undefined
+            ? this.state.configFile[id]
+            : ""
+        }
+        onValueChange={value => {
+          this.setState(
+            {
+              configFile: {
+                ...this.state.configFile,
+                [id]: value
+              }
+            },
+            () => console.log(this.state)
+          );
+        }}
+      />
     );
   }
 }
