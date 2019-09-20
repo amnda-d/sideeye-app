@@ -7,6 +7,7 @@ import { FileConfigInput } from "renderer/config/file";
 import { RegionConfigInput } from "renderer/config/region";
 import { DA1ConfigInput } from "renderer/config/da1";
 import { ASCConfigInput } from "renderer/config/asc";
+import { OutputFileConfigInput } from "renderer/config/output";
 import { expectToExist } from "test/utils";
 
 describe("Configuration Input", () => {
@@ -104,6 +105,18 @@ describe("Configuration Input", () => {
 
       it("displays the RegionMeasuresConfigInput", () =>
         expectToExist(wrapper.find(MeasuresConfigInput)));
+    });
+
+    describe("clicking on Output File", () => {
+      beforeEach(() =>
+        wrapper
+          .find("div")
+          .filterWhere(e => e.text() === "Output File")
+          .simulate("click", { button: 0 })
+      );
+
+      it("displays the OutputFileConfig", () =>
+        expectToExist(wrapper.find(OutputFileConfigInput)));
     });
   });
 });

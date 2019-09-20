@@ -28,7 +28,7 @@ describe("Parser Configuration Input", () => {
             files: [
               new File(
                 [
-                  '{"wide_format": true, "da1_fields": { "index": 0, "condition": 1, "time": 3, "fixation_start": 4 }, "region_fields": { "condition": 10, "boundaries_start": 3, "includes_y": false }, "asc_parsing": {"blink_max_dur": 100}, "cutoffs": {"min": 1000}, "region_measures": {"skip": {"header": "Skip", "cutoff": 100}}, "trial_measures": {"fixation_count": {"header": "Fixation Ct"}}}'
+                  '{"wide_format": true, "da1_fields": { "index": 0, "condition": 1, "time": 3, "fixation_start": 4 }, "region_fields": { "condition": 10, "boundaries_start": 3, "includes_y": false }, "asc_parsing": {"blink_max_dur": 100}, "cutoffs": {"min": 1000}, "region_measures": {"skip": {"header": "Skip", "cutoff": 100}}, "trial_measures": {"fixation_count": {"header": "Fixation Ct"}}, "output_columns": {"region_end": { "header": "Region End", "exclude": false }}}'
                 ],
                 "region.cnt"
               )
@@ -90,6 +90,13 @@ describe("Parser Configuration Input", () => {
       expect(wrapper.state("configFile")).toMatchObject({
         trial_measures: {
           fixation_count: { header: "Fixation Ct", use_cutoff: false }
+        }
+      }));
+
+    it("updates the region_end header value", () =>
+      expect(wrapper.state("configFile")).toMatchObject({
+        output_columns: {
+          region_end: { header: "Region End", exclude: false }
         }
       }));
   });

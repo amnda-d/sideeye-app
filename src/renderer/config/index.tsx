@@ -7,6 +7,7 @@ import { DA1ConfigInput } from "renderer/config/da1";
 import { RegionConfigInput } from "renderer/config/region";
 import { MeasuresConfigInput } from "renderer/config/measures";
 import { FileConfigInput } from "renderer/config/file";
+import { OutputFileConfigInput } from "renderer/config/output";
 
 export class ConfigInput extends React.Component {
   state = {
@@ -15,7 +16,8 @@ export class ConfigInput extends React.Component {
     displayDA1: false,
     displayASC: false,
     displayCutoffs: false,
-    displayMeasures: false
+    displayMeasures: false,
+    displayOutput: false
   };
 
   render() {
@@ -69,6 +71,16 @@ export class ConfigInput extends React.Component {
               Trial and Region Measures
             </Header>
             {this.state.displayMeasures && <MeasuresConfigInput />}
+            <Header
+              onClick={() =>
+                this.setState({
+                  displayOutput: !this.state.displayOutput
+                })
+              }
+            >
+              Output File
+            </Header>
+            {this.state.displayOutput && <OutputFileConfigInput />}
           </div>
         )}
       </Wrapper>

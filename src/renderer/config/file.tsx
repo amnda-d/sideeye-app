@@ -26,6 +26,9 @@ export class FileConfigInput extends React.Component<
     const trial_measures = JSON.parse(
       localStorage.getItem("trial_measures") || "{}"
     );
+    const output_columns = JSON.parse(
+      localStorage.getItem("output_columns") || "{}"
+    );
 
     this.state = {
       configFile: {
@@ -63,7 +66,8 @@ export class FileConfigInput extends React.Component<
           mapValues(trial_measures, measure_config => ({
             ...measure_config,
             use_cutoff: measure_config.cutoff ? true : false
-          })) || {}
+          })) || {},
+        output_columns: output_columns || {}
       },
       error: null
     };
@@ -92,7 +96,11 @@ export class FileConfigInput extends React.Component<
     );
     localStorage.setItem(
       "trial_measures",
-      JSON.stringify(this.state.configFile.region_measures)
+      JSON.stringify(this.state.configFile.trial_measures)
+    );
+    localStorage.setItem(
+      "output_columns",
+      JSON.stringify(this.state.configFile.output_columns)
     );
   }
 
@@ -161,7 +169,8 @@ export class FileConfigInput extends React.Component<
             mapValues(configJSON.trial_measures, measure_config => ({
               ...measure_config,
               use_cutoff: measure_config.cutoff ? true : false
-            })) || {}
+            })) || {},
+          output_columns: configJSON.output_columns || {}
         },
         error: null
       });
