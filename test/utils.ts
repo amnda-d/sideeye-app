@@ -9,6 +9,10 @@ export function expectToExist(element: ReactWrapper<any>): void {
   expect(element.exists()).toEqual(true);
 }
 
+export function expectNotToExist(element: ReactWrapper<any>): void {
+  expect(element.exists()).toEqual(false);
+}
+
 export async function selectDropdownValue(
   wrapper: ReactWrapper,
   select: ReactWrapper<any>,

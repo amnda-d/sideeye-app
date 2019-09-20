@@ -1,6 +1,7 @@
 import * as React from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { ConfigInput } from "renderer/config";
+import { MeasuresConfigInput } from "renderer/config/measures";
 import { CutoffsConfigInput } from "renderer/config/cutoffs";
 import { FileConfigInput } from "renderer/config/file";
 import { RegionConfigInput } from "renderer/config/region";
@@ -91,6 +92,18 @@ describe("Configuration Input", () => {
 
       it("displays the CutoffsConfigInput", () =>
         expectToExist(wrapper.find(CutoffsConfigInput)));
+    });
+
+    describe("clicking on Trial and Region Measures", () => {
+      beforeEach(() =>
+        wrapper
+          .find("div")
+          .filterWhere(e => e.text() === "Trial and Region Measures")
+          .simulate("click", { button: 0 })
+      );
+
+      it("displays the RegionMeasuresConfigInput", () =>
+        expectToExist(wrapper.find(MeasuresConfigInput)));
     });
   });
 });

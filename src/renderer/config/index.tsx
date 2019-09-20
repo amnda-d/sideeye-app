@@ -5,6 +5,7 @@ import { ASCConfigInput } from "renderer/config/asc";
 import { CutoffsConfigInput } from "renderer/config/cutoffs";
 import { DA1ConfigInput } from "renderer/config/da1";
 import { RegionConfigInput } from "renderer/config/region";
+import { MeasuresConfigInput } from "renderer/config/measures";
 import { FileConfigInput } from "renderer/config/file";
 
 export class ConfigInput extends React.Component {
@@ -13,7 +14,8 @@ export class ConfigInput extends React.Component {
     displayRegion: false,
     displayDA1: false,
     displayASC: false,
-    displayCutoffs: false
+    displayCutoffs: false,
+    displayMeasures: false
   };
 
   render() {
@@ -57,6 +59,16 @@ export class ConfigInput extends React.Component {
               Fixation and Saccade Cutoffs
             </Header>
             {this.state.displayCutoffs && <CutoffsConfigInput />}
+            <Header
+              onClick={() =>
+                this.setState({
+                  displayMeasures: !this.state.displayMeasures
+                })
+              }
+            >
+              Trial and Region Measures
+            </Header>
+            {this.state.displayMeasures && <MeasuresConfigInput />}
           </div>
         )}
       </Wrapper>

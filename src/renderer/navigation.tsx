@@ -13,7 +13,7 @@ export class Navigation extends React.Component<
     return (
       <Wrapper>
         <div
-          className={this.state.currentPage === 0 ? "selected" : null}
+          className={this.state.currentPage === 0 ? "selected" : ""}
           onClick={() => {
             this.props.updatePage("/");
             this.setState({ currentPage: 0 });
@@ -22,7 +22,7 @@ export class Navigation extends React.Component<
           Home
         </div>
         <div
-          className={this.state.currentPage === 1 ? "selected" : null}
+          className={this.state.currentPage === 1 ? "selected" : ""}
           onClick={() => {
             this.props.updatePage("/region");
             this.setState({ currentPage: 1 });
@@ -31,7 +31,7 @@ export class Navigation extends React.Component<
           Regions
         </div>
         <div
-          className={this.state.currentPage === 2 ? "selected" : null}
+          className={this.state.currentPage === 2 ? "selected" : ""}
           onClick={() => {
             this.props.updatePage("/config");
             this.setState({ currentPage: 2 });

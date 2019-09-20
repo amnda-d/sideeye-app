@@ -28,7 +28,7 @@ describe("Parser Configuration Input", () => {
             files: [
               new File(
                 [
-                  '{"wide_format": true, "da1_fields": { "index": 0, "condition": 1, "time": 3, "fixation_start": 4 }, "region_fields": { "condition": 10, "boundaries_start": 3, "includes_y": false }, "asc_parsing": {"blink_max_dur": 100}, "cutoffs": {"min": 1000}}'
+                  '{"wide_format": true, "da1_fields": { "index": 0, "condition": 1, "time": 3, "fixation_start": 4 }, "region_fields": { "condition": 10, "boundaries_start": 3, "includes_y": false }, "asc_parsing": {"blink_max_dur": 100}, "cutoffs": {"min": 1000}, "region_measures": {"skip": {"header": "Skip", "cutoff": 100}}, "trial_measures": {"fixation_count": {"header": "Fixation Ct"}}}'
                 ],
                 "region.cnt"
               )
@@ -76,6 +76,20 @@ describe("Parser Configuration Input", () => {
           max: -1,
           include_fixation: false,
           include_saccades: false
+        }
+      }));
+
+    it("updates the skip header value", () =>
+      expect(wrapper.state("configFile")).toMatchObject({
+        region_measures: {
+          skip: { header: "Skip", cutoff: 100, use_cutoff: true }
+        }
+      }));
+
+    it("updates the fixation count header value", () =>
+      expect(wrapper.state("configFile")).toMatchObject({
+        trial_measures: {
+          fixation_count: { header: "Fixation Ct", use_cutoff: false }
         }
       }));
   });

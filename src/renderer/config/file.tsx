@@ -1,6 +1,7 @@
 import * as React from "react";
 import { FileInput } from "@blueprintjs/core";
 import { readAsText } from "promise-file-reader";
+import { mapValues } from "lodash";
 import styled from "styled-components";
 
 export class FileConfigInput extends React.Component<
@@ -19,6 +20,12 @@ export class FileConfigInput extends React.Component<
     );
     const asc_parsing = JSON.parse(localStorage.getItem("asc_parsing") || "{}");
     const cutoffs = JSON.parse(localStorage.getItem("cutoffs") || "{}");
+    const region_measures = JSON.parse(
+      localStorage.getItem("region_measures") || "{}"
+    );
+    const trial_measures = JSON.parse(
+      localStorage.getItem("trial_measures") || "{}"
+    );
 
     this.state = {
       configFile: {
@@ -46,7 +53,17 @@ export class FileConfigInput extends React.Component<
           max: cutoffs.max || -1,
           include_fixation: cutoffs.include_fixation || false,
           include_saccades: cutoffs.include_saccades || false
-        }
+        },
+        region_measures:
+          mapValues(region_measures, measure_config => ({
+            ...measure_config,
+            use_cutoff: measure_config.cutoff ? true : false
+          })) || {},
+        trial_measures:
+          mapValues(trial_measures, measure_config => ({
+            ...measure_config,
+            use_cutoff: measure_config.cutoff ? true : false
+          })) || {}
       },
       error: null
     };
@@ -68,6 +85,14 @@ export class FileConfigInput extends React.Component<
     localStorage.setItem(
       "cutoffs",
       JSON.stringify(this.state.configFile.cutoffs)
+    );
+    localStorage.setItem(
+      "region_measures",
+      JSON.stringify(this.state.configFile.region_measures)
+    );
+    localStorage.setItem(
+      "trial_measures",
+      JSON.stringify(this.state.configFile.region_measures)
     );
   }
 
@@ -126,7 +151,17 @@ export class FileConfigInput extends React.Component<
             include_saccades: configJSON.cutoffs
               ? configJSON.cutoffs.include_saccades || false
               : false
-          }
+          },
+          region_measures:
+            mapValues(configJSON.region_measures, measure_config => ({
+              ...measure_config,
+              use_cutoff: measure_config.cutoff ? true : false
+            })) || {},
+          trial_measures:
+            mapValues(configJSON.trial_measures, measure_config => ({
+              ...measure_config,
+              use_cutoff: measure_config.cutoff ? true : false
+            })) || {}
         },
         error: null
       });
