@@ -53,7 +53,7 @@ class App extends React.Component<{}, { page: string }> {
 
 const Wrapper = styled.div`
   color: ${colors.text};
-  background-color: ${colors.lightGray};
+  background-color: ${colors.background};
   width: 100vw;
   min-height: 100vh;
   height: max-content;

@@ -7,7 +7,9 @@ import {
   Switch
 } from "@blueprintjs/core";
 import { map, set, get } from "lodash";
+import styled from "styled-components";
 import { FormWrapper } from "renderer/config";
+import { colors } from "renderer/colors";
 
 const regionMeasures = {
   "region_measures.skip": "Skip",
@@ -114,8 +116,10 @@ export class MeasuresConfigInput extends React.Component<
   render() {
     return (
       <FormWrapper>
-        {map(regionMeasures, (label, id) => this.renderMeasure(label, id))}
-        {map(trialMeasures, (label, id) => this.renderMeasure(label, id))}
+        <Wrapper>
+          {map(regionMeasures, (label, id) => this.renderMeasure(label, id))}
+          {map(trialMeasures, (label, id) => this.renderMeasure(label, id))}
+        </Wrapper>
       </FormWrapper>
     );
   }
@@ -123,7 +127,7 @@ export class MeasuresConfigInput extends React.Component<
   renderMeasure(label: string, id: string) {
     const excluded = get(this.state, `configFile.${id}.exclude`) || false;
     return (
-      <FormGroup key={id}>
+      <MeasureWrapper key={id}>
         <Checkbox
           label={label}
           id={id}
@@ -135,7 +139,7 @@ export class MeasuresConfigInput extends React.Component<
           }}
         />
         {!excluded && (
-          <div>
+          <MeasureConfig>
             {this.renderTextField(
               "Output Header",
               `configFile.${id}.header`,
@@ -144,19 +148,20 @@ export class MeasuresConfigInput extends React.Component<
             {this.renderSwitch("Use cutoff?", `configFile.${id}.use_cutoff`)}
             {get(this.state, `configFile.${id}.use_cutoff`) &&
               this.renderField("Cutoff value", `configFile.${id}.cutoff`)}
-          </div>
+          </MeasureConfig>
         )}
-      </FormGroup>
+      </MeasureWrapper>
     );
   }
 
   renderField(label: string, id: string) {
     return (
       <FormGroup inline label={label}>
-        <NumericInput
-          large
+        <StyledNumericInput
           id={id}
-          placeholder="None"
+          rightElement={<NumberLabel>ms</NumberLabel>}
+          buttonPosition="none"
+          placeholder={"0"}
           value={get(this.state, id)}
           onValueChange={value => {
             this.setState(set(this.state, id, value), () =>
@@ -171,8 +176,7 @@ export class MeasuresConfigInput extends React.Component<
   renderTextField(label: string, id: string, placeholder: string = "") {
     return (
       <FormGroup inline label={label}>
-        <InputGroup
-          large
+        <StyledInputGroup
           id={id}
           placeholder={placeholder}
           value={get(this.state, id) || ""}
@@ -189,7 +193,6 @@ export class MeasuresConfigInput extends React.Component<
     return (
       <FormGroup inline label={label}>
         <Switch
-          large
           id={id}
           checked={checked || false}
           onChange={() => {
@@ -200,3 +203,49 @@ export class MeasuresConfigInput extends React.Component<
     );
   }
 }
+
+const MeasureWrapper = styled.div`
+  border-radius: 3px;
+  padding: 10px;
+
+  .bp3-checkbox {
+    margin: 0;
+    width: fit-content;
+  }
+`;
+
+const Wrapper = styled.div`
+  ${MeasureWrapper}:nth-child(even) {
+    background-color: ${colors.background};
+  }
+
+  ${MeasureWrapper}:nth-child(odd) {
+    background-color: ${colors.lightGray};
+  }
+`;
+
+const MeasureConfig = styled.div`
+  display: flex;
+  margin: 5px 0 5px 20px;
+
+  .bp3-form-group {
+    padding-right: 20px;
+    margin-bottom: 0;
+  }
+`;
+
+const StyledInputGroup = styled(InputGroup)`
+  width: 300px;
+`;
+
+const StyledNumericInput = styled(NumericInput)`
+  .bp3-input-group {
+    width: 100px;
+  }
+`;
+
+const NumberLabel = styled.div`
+  line-height: 30px;
+  color: ${colors.gray};
+  padding-right: 8px;
+`;
