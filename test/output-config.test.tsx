@@ -1,14 +1,10 @@
 import * as React from "react";
 import { Checkbox, FormGroup } from "@blueprintjs/core";
 import { mount, ReactWrapper } from "enzyme";
-import { forEach, get } from "lodash";
+import { forEach, get, set } from "lodash";
 import { OutputFileConfigInput } from "renderer/config/output";
-import {
-  waitForUpdate,
-  expectFormInput,
-  expectToExist,
-  expectNotToExist
-} from "test/utils";
+import { defaultConfig } from "renderer/config/default-config";
+import { expectFormInput, expectToExist, expectNotToExist } from "test/utils";
 
 const columns = [
   "experiment_name",
@@ -27,9 +23,17 @@ const columns = [
 
 describe("Output File Configuration Input", () => {
   let wrapper: ReactWrapper;
+  let state = { config: defaultConfig, error: null };
 
   beforeEach(() => {
-    wrapper = mount(<OutputFileConfigInput />);
+    wrapper = mount(
+      <OutputFileConfigInput
+        config={defaultConfig}
+        updateConfig={(key: string, value) => {
+          state = set(state, key, value);
+        }}
+      />
+    );
   });
 
   const testOutputConfig = async (column: string) =>
@@ -40,33 +44,22 @@ describe("Output File Configuration Input", () => {
       expectToExist(checkbox);
 
       if (checkbox.prop("checked") === true) {
-        expectFormInput(
-          wrapper,
-          `configFile.${column}.header`,
-          "Output Header",
-          ""
-        );
+        expectFormInput(wrapper, `${column}.header`, "Output Header", "");
         wrapper
           .find("input")
-          .filterWhere(e => e.prop("id") === `configFile.${column}.header`)
+          .filterWhere(e => e.prop("id") === `${column}.header`)
           .simulate("change", { target: { value: "name" } });
-        await waitForUpdate(wrapper);
-        expect(get(wrapper.state("configFile"), `${column}.header`)).toEqual(
-          "name"
-        );
+        expect(get(state, `output_columns.${column}.header`)).toEqual("name");
       } else {
         expectNotToExist(
           wrapper
             .find(FormGroup)
-            .filterWhere(e => e.prop("id") === `configFile.${column}.header`)
+            .filterWhere(e => e.prop("id") === `${column}.header`)
         );
         checkbox
           .find("input")
           .simulate("change", { target: { checked: true } });
-        await waitForUpdate(wrapper);
-        expect(get(wrapper.state("configFile"), `${column}.exclude`)).toEqual(
-          false
-        );
+        expect(get(state, `output_columns.${column}.exclude`)).toEqual(false);
       }
     });
 

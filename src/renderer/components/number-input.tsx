@@ -6,8 +6,8 @@ import { colors } from "renderer/colors";
 export const NumberInput = (props: {
   label: string;
   id: string;
-  value: string;
-  onValueChange: (value: number) => void;
+  value: number | undefined;
+  onValueChange: (value: number | undefined) => void;
   units: string;
 }) => (
   <FormGroup inline label={props.label}>

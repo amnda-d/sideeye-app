@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Checkbox } from "@blueprintjs/core";
-import { map, set, get } from "lodash";
+import { map, get } from "lodash";
 import styled from "styled-components";
 import { FormWrapper } from "renderer/config";
+import { Config } from "renderer/config/default-config";
 import { colors } from "renderer/colors";
 import { TextInput } from "renderer/components/text-input";
 
@@ -21,44 +22,10 @@ const columns = {
   region_end: "Region End"
 };
 
-export class OutputFileConfigInput extends React.Component<
-  {},
-  {
-    configFile: { [key: string]: any };
-  }
-> {
-  constructor(props: {}) {
-    super(props);
-
-    const existingOutputConfig = JSON.parse(
-      localStorage.getItem("output_columns") || "{}"
-    );
-
-    this.state = {
-      configFile: {
-        experiment_name: existingOutputConfig.experiment_name || {},
-        filename: existingOutputConfig.filename || { exclude: true },
-        date: existingOutputConfig.date || { exclude: true },
-        trial_id: existingOutputConfig.trial_id || {},
-        trial_total_time: existingOutputConfig.trial_total_time || {},
-        item_id: existingOutputConfig.item_id || {},
-        item_condition: existingOutputConfig.item_condition || {},
-        region_label: existingOutputConfig.region_label || { exclude: true },
-        region_number: existingOutputConfig.region_number || {},
-        region_text: existingOutputConfig.region_text || { exclude: true },
-        region_start: existingOutputConfig.region_start || { exclude: true },
-        region_end: existingOutputConfig.region_end || { exclude: true }
-      }
-    };
-  }
-
-  componentWillUnmount() {
-    localStorage.setItem(
-      "output_columns",
-      JSON.stringify(this.state.configFile)
-    );
-  }
-
+export class OutputFileConfigInput extends React.Component<{
+  config: Config;
+  updateConfig: (key: string, newValue: boolean | string) => void;
+}> {
   render() {
     return (
       <FormWrapper>
@@ -70,31 +37,33 @@ export class OutputFileConfigInput extends React.Component<
   }
 
   renderColumn(label: string, id: string) {
-    const excluded = get(this.state, `configFile.${id}.exclude`) || false;
+    const excluded =
+      get(this.props.config, `output_columns.${id}.exclude`) || false;
     return (
       <MeasureWrapper key={id}>
         <Checkbox
           label={label}
           id={id}
           checked={!excluded}
-          onChange={() => {
-            this.setState(
-              set(this.state, `configFile.${id}.exclude`, !excluded)
-            );
-          }}
+          onChange={() =>
+            this.props.updateConfig(`output_columns.${id}.exclude`, !excluded)
+          }
         />
         {!excluded && (
           <MeasureConfig>
             <TextInput
               label="Output Header"
-              id={`configFile.${id}.header`}
+              id={`${id}.header`}
               placeholder={id}
-              value={get(this.state, `configFile.${id}.header`) || ""}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                this.setState(
-                  set(this.state, `configFile.${id}.header`, e.target.value)
-                );
-              }}
+              value={
+                get(this.props.config, `output_columns.${id}.header`) || ""
+              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                this.props.updateConfig(
+                  `output_columns.${id}.header`,
+                  e.target.value
+                )
+              }
             />
           </MeasureConfig>
         )}

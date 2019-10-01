@@ -1,34 +1,12 @@
 import * as React from "react";
 import { FormWrapper } from "renderer/config";
 import { NumberInput } from "renderer/components/number-input";
+import { Config } from "renderer/config/default-config";
 
-export class ASCConfigInput extends React.Component<
-  {},
-  {
-    configFile: { [key: string]: any };
-  }
-> {
-  constructor(props: {}) {
-    super(props);
-
-    const existingConfig = JSON.parse(
-      localStorage.getItem("asc_parsing") || "{}"
-    );
-
-    this.state = {
-      configFile: {
-        fixation_min_cutoff: existingConfig.fixation_min_cutoff || false,
-        max_saccade_dur: existingConfig.max_saccade_dur || false,
-        blink_max_count: existingConfig.blink_max_count || false,
-        blink_max_dur: existingConfig.blink_max_dur || false
-      }
-    };
-  }
-
-  componentWillUnmount() {
-    localStorage.setItem("asc_parsing", JSON.stringify(this.state.configFile));
-  }
-
+export class ASCConfigInput extends React.Component<{
+  config: Config;
+  updateConfig: (key: string, newValue: number) => void;
+}> {
   render() {
     return (
       <FormWrapper>
@@ -44,24 +22,24 @@ export class ASCConfigInput extends React.Component<
     );
   }
 
-  renderField(label: string, id: string, units: string) {
+  renderField(
+    label: string,
+    id:
+      | "fixation_min_cutoff"
+      | "max_saccade_dur"
+      | "blink_max_count"
+      | "blink_max_dur",
+    units: string
+  ) {
     return (
       <NumberInput
         label={label}
         id={id}
         units={units}
-        value={this.state.configFile[id] || ""}
-        onValueChange={value => {
-          this.setState(
-            {
-              configFile: {
-                ...this.state.configFile,
-                [id]: value
-              }
-            },
-            () => console.log(this.state)
-          );
-        }}
+        value={this.props.config.asc_parsing[id]}
+        onValueChange={value =>
+          this.props.updateConfig(`asc_parsing.${id}`, value || 0)
+        }
       />
     );
   }

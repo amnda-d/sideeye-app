@@ -2,32 +2,12 @@ import * as React from "react";
 import { FormWrapper } from "renderer/config";
 import { NumberInput } from "renderer/components/number-input";
 import { SwitchInput } from "renderer/components/switch-input";
+import { Config } from "renderer/config/default-config";
 
-export class CutoffsConfigInput extends React.Component<
-  {},
-  {
-    configFile: { [key: string]: any };
-  }
-> {
-  constructor(props: {}) {
-    super(props);
-
-    const existingConfig = JSON.parse(localStorage.getItem("cutoffs") || "{}");
-
-    this.state = {
-      configFile: {
-        min: existingConfig.min || -1,
-        max: existingConfig.max || -1,
-        include_fixation: existingConfig.include_fixation || false,
-        include_saccades: existingConfig.include_saccades || false
-      }
-    };
-  }
-
-  componentWillUnmount() {
-    localStorage.setItem("cutoffs", JSON.stringify(this.state.configFile));
-  }
-
+export class CutoffsConfigInput extends React.Component<{
+  config: Config;
+  updateConfig: (key: string, newValue: number | boolean) => void;
+}> {
   render() {
     return (
       <FormWrapper>
@@ -45,49 +25,32 @@ export class CutoffsConfigInput extends React.Component<
     );
   }
 
-  renderField(label: string, id: string, units: string) {
+  renderField(label: string, id: "min" | "max", units: string) {
     return (
       <NumberInput
         label={label}
         id={id}
         units={units}
-        value={
-          this.state.configFile[id] !== undefined
-            ? this.state.configFile[id]
-            : ""
+        value={this.props.config.cutoffs[id]}
+        onValueChange={value =>
+          this.props.updateConfig(`cutoffs.${id}`, value || 0)
         }
-        onValueChange={value => {
-          this.setState(
-            {
-              configFile: {
-                ...this.state.configFile,
-                [id]: value
-              }
-            },
-            () => console.log(this.state)
-          );
-        }}
       />
     );
   }
 
-  renderSwitch(label: string, id: string) {
+  renderSwitch(label: string, id: "include_fixation" | "include_saccades") {
     return (
       <SwitchInput
         label={label}
         id={id}
-        checked={this.state.configFile[id]}
-        onChange={() => {
-          this.setState(
-            {
-              configFile: {
-                ...this.state.configFile,
-                [id]: !this.state.configFile[id]
-              }
-            },
-            () => console.log(this.state)
-          );
-        }}
+        checked={this.props.config.cutoffs[id]}
+        onChange={() =>
+          this.props.updateConfig(
+            `cutoffs.${id}`,
+            !this.props.config.cutoffs[id]
+          )
+        }
       />
     );
   }

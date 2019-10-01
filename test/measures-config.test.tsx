@@ -1,8 +1,10 @@
 import * as React from "react";
-import { Checkbox, FormGroup, Switch } from "@blueprintjs/core";
+import { Checkbox, FormGroup } from "@blueprintjs/core";
 import { mount, ReactWrapper } from "enzyme";
+import { set } from "lodash";
 import { forEach, get } from "lodash";
 import { MeasuresConfigInput } from "renderer/config/measures";
+import { defaultConfig } from "renderer/config/default-config";
 import {
   waitForUpdate,
   expectFormInput,
@@ -41,9 +43,17 @@ const measures = [
 
 describe("Measure Configuration Input", () => {
   let wrapper: ReactWrapper;
+  let state = defaultConfig;
 
   beforeEach(() => {
-    wrapper = mount(<MeasuresConfigInput />);
+    wrapper = mount(
+      <MeasuresConfigInput
+        config={defaultConfig}
+        updateConfig={(key: string, value) => {
+          state = set(state, key, value);
+        }}
+      />
+    );
   });
 
   const testRegionMeasure = async (measure: string) =>
@@ -52,51 +62,26 @@ describe("Measure Configuration Input", () => {
         .find(Checkbox)
         .filterWhere(e => e.prop("id") === measure);
       expectToExist(checkbox);
-      expectFormInput(
-        wrapper,
-        `configFile.${measure}.header`,
-        "Output Header",
-        ""
-      );
+      expectFormInput(wrapper, `${measure}.header`, "Output Header", "");
 
       wrapper
         .find("input")
-        .filterWhere(e => e.prop("id") === `configFile.${measure}.header`)
+        .filterWhere(e => e.prop("id") === `${measure}.header`)
         .simulate("change", { target: { value: "name" } });
       await waitForUpdate(wrapper);
-      expect(get(wrapper.state("configFile"), `${measure}.header`)).toEqual(
-        "name"
-      );
+      expect(get(state, `${measure}.header`)).toEqual("name");
 
-      expectFormSwitch(
-        wrapper,
-        `configFile.${measure}.use_cutoff`,
-        "Use cutoff?",
-        false
-      );
-
-      wrapper
-        .find(Switch)
-        .filterWhere(e => e.prop("id") === `configFile.${measure}.use_cutoff`)
-        .find("input")
-        .simulate("change", { target: { checked: true } });
-      await waitForUpdate(wrapper);
-      expectFormInput(
-        wrapper,
-        `configFile.${measure}.cutoff`,
-        "Cutoff value",
-        ""
-      );
+      expectFormSwitch(wrapper, `${measure}.use_cutoff`, "Use cutoff?", false);
+      wrapper.setProps({ config: set(state, `${measure}.use_cutoff`, true) });
+      expectFormSwitch(wrapper, `${measure}.use_cutoff`, "Use cutoff?", true);
+      expectFormInput(wrapper, `${measure}.cutoff`, "Cutoff value", "0");
 
       checkbox.find("input").simulate("change", { target: { checked: false } });
-      await waitForUpdate(wrapper);
-      expect(get(wrapper.state("configFile"), `${measure}.exclude`)).toEqual(
-        true
-      );
+      expect(get(state, `${measure}.exclude`)).toEqual(true);
       expectNotToExist(
         wrapper
           .find(FormGroup)
-          .filterWhere(e => e.prop("id") === `configFile.${measure}.use_cutoff`)
+          .filterWhere(e => e.prop("id") === `${measure}.use_cutoff`)
       );
     });
 

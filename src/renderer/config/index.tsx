@@ -1,5 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
+import { set } from "lodash";
 import { colors } from "renderer/colors";
 import { ASCConfigInput } from "renderer/config/asc";
 import { CutoffsConfigInput } from "renderer/config/cutoffs";
@@ -8,6 +9,7 @@ import { RegionConfigInput } from "renderer/config/region";
 import { MeasuresConfigInput } from "renderer/config/measures";
 import { FileConfigInput } from "renderer/config/file";
 import { OutputFileConfigInput } from "renderer/config/output";
+import { defaultConfig } from "renderer/config/default-config";
 
 export class ConfigInput extends React.Component {
   state = {
@@ -17,13 +19,19 @@ export class ConfigInput extends React.Component {
     displayASC: false,
     displayCutoffs: false,
     displayMeasures: false,
-    displayOutput: false
+    displayOutput: false,
+    config: defaultConfig
   };
 
   render() {
     return (
       <Wrapper>
-        <FileConfigInput />
+        <FileConfigInput
+          config={this.state.config}
+          updateConfig={newValue =>
+            this.setState(set(this.state, "config", newValue))
+          }
+        />
         <button onClick={() => this.setState({ displayConfig: true })}>
           Create New Configuration
         </button>
@@ -36,7 +44,14 @@ export class ConfigInput extends React.Component {
             >
               Region Configuration
             </Header>
-            {this.state.displayRegion && <RegionConfigInput />}
+            {this.state.displayRegion && (
+              <RegionConfigInput
+                config={this.state.config}
+                updateConfig={(key, newValue) =>
+                  this.setState(set(this.state, `config.${key}`, newValue))
+                }
+              />
+            )}
             <Header
               onClick={() =>
                 this.setState({ displayDA1: !this.state.displayDA1 })
@@ -44,7 +59,14 @@ export class ConfigInput extends React.Component {
             >
               DA1 Configuration
             </Header>
-            {this.state.displayDA1 && <DA1ConfigInput />}
+            {this.state.displayDA1 && (
+              <DA1ConfigInput
+                config={this.state.config}
+                updateConfig={(key, newValue) =>
+                  this.setState(set(this.state, `config.${key}`, newValue))
+                }
+              />
+            )}
             <Header
               onClick={() =>
                 this.setState({ displayASC: !this.state.displayASC })
@@ -52,7 +74,14 @@ export class ConfigInput extends React.Component {
             >
               ASC Parsing Configuration
             </Header>
-            {this.state.displayASC && <ASCConfigInput />}
+            {this.state.displayASC && (
+              <ASCConfigInput
+                config={this.state.config}
+                updateConfig={(key, newValue) =>
+                  this.setState(set(this.state, `config.${key}`, newValue))
+                }
+              />
+            )}
             <Header
               onClick={() =>
                 this.setState({ displayCutoffs: !this.state.displayCutoffs })
@@ -60,7 +89,14 @@ export class ConfigInput extends React.Component {
             >
               Fixation and Saccade Cutoffs
             </Header>
-            {this.state.displayCutoffs && <CutoffsConfigInput />}
+            {this.state.displayCutoffs && (
+              <CutoffsConfigInput
+                config={this.state.config}
+                updateConfig={(key, newValue) =>
+                  this.setState(set(this.state, `config.${key}`, newValue))
+                }
+              />
+            )}
             <Header
               onClick={() =>
                 this.setState({
@@ -70,7 +106,14 @@ export class ConfigInput extends React.Component {
             >
               Trial and Region Measures
             </Header>
-            {this.state.displayMeasures && <MeasuresConfigInput />}
+            {this.state.displayMeasures && (
+              <MeasuresConfigInput
+                config={this.state.config}
+                updateConfig={(key, newValue) =>
+                  this.setState(set(this.state, `config.${key}`, newValue))
+                }
+              />
+            )}
             <Header
               onClick={() =>
                 this.setState({
@@ -80,7 +123,14 @@ export class ConfigInput extends React.Component {
             >
               Output File
             </Header>
-            {this.state.displayOutput && <OutputFileConfigInput />}
+            {this.state.displayOutput && (
+              <OutputFileConfigInput
+                config={this.state.config}
+                updateConfig={(key, newValue) =>
+                  this.setState(set(this.state, `config.${key}`, newValue))
+                }
+              />
+            )}
           </div>
         )}
       </Wrapper>

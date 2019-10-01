@@ -1,13 +1,23 @@
 import { mount, ReactWrapper } from "enzyme";
 import * as React from "react";
+import { set } from "lodash";
 import { DA1ConfigInput } from "renderer/config/da1";
+import { defaultConfig } from "renderer/config/default-config";
 import { waitForUpdate, expectFormInput } from "test/utils";
 
 describe("Parser Configuration Input", () => {
   let wrapper: ReactWrapper;
+  let state = defaultConfig;
 
   beforeEach(() => {
-    wrapper = mount(<DA1ConfigInput />);
+    wrapper = mount(
+      <DA1ConfigInput
+        config={defaultConfig}
+        updateConfig={(key: string, value: number) => {
+          state = set(state, key, value);
+        }}
+      />
+    );
   });
 
   it("displays the index field", () =>
@@ -35,6 +45,6 @@ describe("Parser Configuration Input", () => {
     });
 
     it("updates state", () =>
-      expect(wrapper.state("configFile")).toMatchObject({ index: 10 }));
+      expect(state.da1_fields).toMatchObject({ index: 10 }));
   });
 });

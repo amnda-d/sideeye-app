@@ -1,12 +1,13 @@
 import * as React from "react";
 import { Checkbox } from "@blueprintjs/core";
-import { map, set, get } from "lodash";
+import { map, get } from "lodash";
 import styled from "styled-components";
 import { FormWrapper } from "renderer/config";
 import { colors } from "renderer/colors";
 import { NumberInput } from "renderer/components/number-input";
 import { TextInput } from "renderer/components/text-input";
 import { SwitchInput } from "renderer/components/switch-input";
+import { Config } from "renderer/config/default-config";
 
 const regionMeasures = {
   "region_measures.skip": "Skip",
@@ -39,77 +40,10 @@ const trialMeasures = {
   "trial_measures.average_backward_saccade": "Average Backward Saccade Duration"
 };
 
-export class MeasuresConfigInput extends React.Component<
-  {},
-  {
-    configFile: { [key: string]: any };
-  }
-> {
-  constructor(props: {}) {
-    super(props);
-
-    const existingRegionConfig = JSON.parse(
-      localStorage.getItem("region_measures") || "{}"
-    );
-    const existingTrialConfig = JSON.parse(
-      localStorage.getItem("trial_measures") || "{}"
-    );
-
-    this.state = {
-      configFile: {
-        region_measures: {
-          skip: existingRegionConfig.skip || {},
-          first_pass_regressions_out:
-            existingRegionConfig.first_pass_regressions_out || {},
-          first_pass_regressions_in:
-            existingRegionConfig.first_pass_regressions_in || {},
-          first_fixation_duration:
-            existingRegionConfig.first_fixation_duration || {},
-          single_fixation_duration:
-            existingRegionConfig.single_fixation_duration || {},
-          first_pass: existingRegionConfig.first_pass || {},
-          go_past: existingRegionConfig.go_past || {},
-          total_time: existingRegionConfig.total_time || {},
-          right_bounded_time: existingRegionConfig.right_bounded_time || {},
-          reread_time: existingRegionConfig.reread_time || {},
-          second_pass: existingRegionConfig.second_pass || {},
-          spillover_time: existingRegionConfig.spillover_time || {},
-          refixation_time: existingRegionConfig.refixation_time || {},
-          landing_position: existingRegionConfig.landing_position || {},
-          launch_site: existingRegionConfig.launch_site || {},
-          first_pass_fixation_count:
-            existingRegionConfig.first_pass_fixation_count || {},
-          go_back_time_region: existingRegionConfig.go_back_time_region || {},
-          go_back_time_char: existingRegionConfig.go_back_time_char || {}
-        },
-        trial_measures: {
-          location_first_regression:
-            existingTrialConfig.location_first_regression || {},
-          latency_first_regression:
-            existingTrialConfig.latency_first_regression || {},
-          fixation_count: existingTrialConfig.fixation_count || {},
-          percent_regressions: existingTrialConfig.percent_regressions || {},
-          trial_total_time: existingTrialConfig.trial_total_time || {},
-          average_forward_saccade:
-            existingTrialConfig.average_forward_saccade || {},
-          average_backward_saccade:
-            existingTrialConfig.average_backward_saccade || {}
-        }
-      }
-    };
-  }
-
-  componentWillUnmount() {
-    localStorage.setItem(
-      "region_measures",
-      JSON.stringify(this.state.configFile.region_measures)
-    );
-    localStorage.setItem(
-      "trial_measures",
-      JSON.stringify(this.state.configFile.trial_measures)
-    );
-  }
-
+export class MeasuresConfigInput extends React.Component<{
+  config: Config;
+  updateConfig: (key: string, newValue: number | boolean | string) => void;
+}> {
   render() {
     return (
       <FormWrapper>
@@ -122,54 +56,44 @@ export class MeasuresConfigInput extends React.Component<
   }
 
   renderMeasure(label: string, id: string) {
-    const excluded = get(this.state, `configFile.${id}.exclude`) || false;
-    const use_cutoff = get(this.state, `configFile.${id}.use_cutoff`) || false;
+    const excluded = get(this.props.config, `${id}.exclude`) || false;
+    const use_cutoff = get(this.props.config, `${id}.use_cutoff`) || false;
     return (
       <MeasureWrapper key={id}>
         <Checkbox
           label={label}
           id={id}
           checked={!excluded}
-          onChange={() => {
-            this.setState(
-              set(this.state, `configFile.${id}.exclude`, !excluded)
-            );
-          }}
+          onChange={() => this.props.updateConfig(`${id}.exclude`, !excluded)}
         />
         {!excluded && (
           <MeasureConfig>
             <TextInput
               label="Output Header"
-              id={`configFile.${id}.header`}
+              id={`${id}.header`}
               placeholder={id.split(".")[1]}
-              value={get(this.state, `configFile.${id}.header`) || ""}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                this.setState(
-                  set(this.state, `configFile.${id}.header`, e.target.value)
-                );
-              }}
+              value={get(this.props.config, `${id}.header`) || ""}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                this.props.updateConfig(`${id}.header`, e.target.value)
+              }
             />
             <SwitchInput
               label="Use cutoff?"
-              id={`configFile.${id}.use_cutoff`}
-              checked={use_cutoff}
-              onChange={() => {
-                this.setState(
-                  set(this.state, `configFile.${id}.use_cutoff`, !use_cutoff)
-                );
-              }}
+              id={`${id}.use_cutoff`}
+              checked={get(this.props.config, `${id}.use_cutoff`) || false}
+              onChange={() =>
+                this.props.updateConfig(`${id}.use_cutoff`, !use_cutoff)
+              }
             />
-            {get(this.state, `configFile.${id}.use_cutoff`) && (
+            {use_cutoff && (
               <NumberInput
                 label="Cutoff value"
-                id={`configFile.${id}.cutoff`}
+                id={`${id}.cutoff`}
                 units="ms"
-                value={get(this.state, id)}
-                onValueChange={value => {
-                  this.setState(set(this.state, id, value), () =>
-                    console.log(this.state)
-                  );
-                }}
+                value={get(this.props.config, `${id}.cutoff`) || 0}
+                onValueChange={value =>
+                  this.props.updateConfig(`${id}.cutoff`, value || 0)
+                }
               />
             )}
           </MeasureConfig>

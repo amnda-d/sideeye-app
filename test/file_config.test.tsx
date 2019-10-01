@@ -1,14 +1,24 @@
 import { FileInput } from "@blueprintjs/core";
 import { mount, ReactWrapper } from "enzyme";
 import * as React from "react";
+import { set } from "lodash";
 import { FileConfigInput } from "renderer/config/file";
-import { expectToExist, waitForStateChange } from "test/utils";
+import { defaultConfig, Config } from "renderer/config/default-config";
+import { expectToExist, waitForUpdate } from "test/utils";
 
 describe("Parser Configuration Input", () => {
   let wrapper: ReactWrapper;
+  let state = { config: defaultConfig, error: null };
 
   beforeEach(() => {
-    wrapper = mount(<FileConfigInput />);
+    wrapper = mount(
+      <FileConfigInput
+        config={defaultConfig}
+        updateConfig={(value: Config) => {
+          state = set(state, "config", value);
+        }}
+      />
+    );
   });
 
   it("displays a file input", () =>
@@ -35,11 +45,11 @@ describe("Parser Configuration Input", () => {
             ]
           }
         });
-      await waitForStateChange(wrapper, wrapper.state());
+      await waitForUpdate(wrapper, 10);
     });
 
     it("updates the DA1 trial duration value", () =>
-      expect(wrapper.state("configFile")).toMatchObject({
+      expect(state.config).toMatchObject({
         da1_fields: {
           index: 0,
           condition: 1,
@@ -50,7 +60,7 @@ describe("Parser Configuration Input", () => {
       }));
 
     it("updates the region condition value", () =>
-      expect(wrapper.state("configFile")).toMatchObject({
+      expect(state.config).toMatchObject({
         region_fields: {
           condition: 10,
           number: 0,
@@ -60,7 +70,7 @@ describe("Parser Configuration Input", () => {
       }));
 
     it("updates the blink_max_dur value", () =>
-      expect(wrapper.state("configFile")).toMatchObject({
+      expect(state.config).toMatchObject({
         asc_parsing: {
           blink_max_dur: 100,
           blink_max_count: false,
@@ -70,7 +80,7 @@ describe("Parser Configuration Input", () => {
       }));
 
     it("updates the min cutoff value", () =>
-      expect(wrapper.state("configFile")).toMatchObject({
+      expect(state.config).toMatchObject({
         cutoffs: {
           min: 1000,
           max: -1,
@@ -80,21 +90,21 @@ describe("Parser Configuration Input", () => {
       }));
 
     it("updates the skip header value", () =>
-      expect(wrapper.state("configFile")).toMatchObject({
+      expect(state.config).toMatchObject({
         region_measures: {
           skip: { header: "Skip", cutoff: 100, use_cutoff: true }
         }
       }));
 
     it("updates the fixation count header value", () =>
-      expect(wrapper.state("configFile")).toMatchObject({
+      expect(state.config).toMatchObject({
         trial_measures: {
           fixation_count: { header: "Fixation Ct", use_cutoff: false }
         }
       }));
 
     it("updates the region_end header value", () =>
-      expect(wrapper.state("configFile")).toMatchObject({
+      expect(state.config).toMatchObject({
         output_columns: {
           region_end: { header: "Region End", exclude: false }
         }

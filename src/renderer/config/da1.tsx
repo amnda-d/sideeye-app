@@ -1,35 +1,12 @@
 import * as React from "react";
 import { FormWrapper } from "renderer/config";
 import { NumberInput } from "renderer/components/number-input";
+import { Config } from "renderer/config/default-config";
 
-export class DA1ConfigInput extends React.Component<
-  {},
-  {
-    configFile: { [key: string]: any };
-  }
-> {
-  constructor(props: {}) {
-    super(props);
-
-    const existingConfig = JSON.parse(
-      localStorage.getItem("da1_fields") || "{}"
-    );
-
-    this.state = {
-      configFile: {
-        index: existingConfig.index || 0,
-        condition: existingConfig.condition || 1,
-        number: existingConfig.number || 2,
-        fixation_start: existingConfig.fixation_start || 8,
-        time: existingConfig.time || -1
-      }
-    };
-  }
-
-  componentWillUnmount() {
-    localStorage.setItem("da1_fields", JSON.stringify(this.state.configFile));
-  }
-
+export class DA1ConfigInput extends React.Component<{
+  config: Config;
+  updateConfig: (key: string, newValue: number) => void;
+}> {
   render() {
     return (
       <FormWrapper>
@@ -42,28 +19,19 @@ export class DA1ConfigInput extends React.Component<
     );
   }
 
-  renderField(label: string, id: string) {
+  renderField(
+    label: string,
+    id: "index" | "condition" | "number" | "fixation_start" | "time"
+  ) {
     return (
       <NumberInput
         label={label}
         id={id}
         units={""}
-        value={
-          this.state.configFile[id] !== undefined
-            ? this.state.configFile[id]
-            : ""
+        value={this.props.config.da1_fields[id]}
+        onValueChange={value =>
+          this.props.updateConfig(`da1_fields.${id}`, value || 0)
         }
-        onValueChange={value => {
-          this.setState(
-            {
-              configFile: {
-                ...this.state.configFile,
-                [id]: value
-              }
-            },
-            () => console.log(this.state)
-          );
-        }}
       />
     );
   }

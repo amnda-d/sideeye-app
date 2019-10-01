@@ -1,13 +1,19 @@
 import * as React from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { CutoffsConfigInput } from "renderer/config/cutoffs";
+import { defaultConfig } from "renderer/config/default-config";
 import { expectFormInput, expectFormSwitch } from "test/utils";
 
 describe("ASC Configuration Input", () => {
   let wrapper: ReactWrapper;
 
   beforeEach(() => {
-    wrapper = mount(<CutoffsConfigInput />);
+    wrapper = mount(
+      <CutoffsConfigInput
+        config={defaultConfig}
+        updateConfig={(key: string, value: any) => null}
+      />
+    );
   });
 
   it("displays the min field", () =>
