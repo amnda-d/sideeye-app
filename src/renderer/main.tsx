@@ -1,6 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
-import { RegionInput } from "renderer/region-input";
+import { RegionFileInput } from "renderer/region-file";
+import { DA1ASCFileInput } from "renderer/da1-asc-file";
 import { ConfigInput } from "renderer/config";
 import { Navigation } from "renderer/navigation";
 import { Title } from "renderer/title";
@@ -44,8 +45,9 @@ class App extends React.Component<{}, { page: string }> {
       <Wrapper>
         <Navigation updatePage={page => this.setState({ page })} />
         {this.state.page === "/" && <Title />}
-        {this.state.page === "/region" && <RegionInput />}
+        {this.state.page === "/region" && <RegionFileInput />}
         {this.state.page === "/config" && <ConfigInput />}
+        {this.state.page === "/da1_asc" && <DA1ASCFileInput />}
       </Wrapper>
     );
   }

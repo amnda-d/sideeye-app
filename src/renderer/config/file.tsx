@@ -8,10 +8,11 @@ import { Config } from "renderer/config/default-config";
 export class FileConfigInput extends React.Component<
   { config: Config; updateConfig: (newValue: Config) => void },
   {
+    filename: string | null;
     error: string | null;
   }
 > {
-  state = { error: null };
+  state = { filename: null, error: null };
   async processNewFile(newFile: File) {
     try {
       const configJSON = JSON.parse(await readAsText(newFile));
@@ -77,6 +78,7 @@ export class FileConfigInput extends React.Component<
           })) || {},
         output_columns: configJSON.output_columns || {}
       });
+      this.setState({ filename: newFile.name });
     } catch (e) {
       this.setState({ error: e.message });
     }
@@ -86,7 +88,7 @@ export class FileConfigInput extends React.Component<
     return (
       <Wrapper>
         <StyledFileInput
-          text="Choose Configuration File..."
+          text={this.state.filename || "Choose Configuration File..."}
           onInputChange={async (e: React.ChangeEvent<HTMLInputElement>) =>
             e.target.files && (await this.processNewFile(e.target.files[0]))
           }

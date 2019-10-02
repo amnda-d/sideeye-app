@@ -39,6 +39,15 @@ export class Navigation extends React.Component<
         >
           Config
         </div>
+        <div
+          className={this.state.currentPage === 3 ? "selected" : ""}
+          onClick={() => {
+            this.props.updatePage("/da1_asc");
+            this.setState({ currentPage: 3 });
+          }}
+        >
+          DA1/ASC Files
+        </div>
       </Wrapper>
     );
   }
