@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { RegionFileInput } from "renderer/region-file";
 import { DA1ASCFileInput } from "renderer/da1-asc-file";
 import { ConfigInput } from "renderer/config";
+import { CSVDownload } from "renderer/csv-download";
 import { Config, defaultConfig } from "renderer/config/default-config";
 import { Navigation } from "renderer/navigation";
 import { Title } from "renderer/title";
@@ -83,6 +84,9 @@ class App extends React.Component<{}, AppConfig> {
             files={this.state.da1AscFiles}
           />
         )}
+        {this.state.regionFilePath &&
+          this.state.config &&
+          this.state.da1AscFiles.length > 0 && <CSVDownload />}
       </Wrapper>
     );
   }
