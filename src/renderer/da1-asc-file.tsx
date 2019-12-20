@@ -1,23 +1,19 @@
 import * as React from "react";
 import { FileInput } from "@blueprintjs/core";
-import { map } from "lodash";
-import { readAsText } from "promise-file-reader";
+import { map, last } from "lodash";
 import styled from "styled-components";
 
 export class DA1ASCFileInput extends React.Component<
-  {},
+  { updateAppState: (state: {}) => void; files: string[] },
   {
-    filenames: string[];
-    files: string[];
     error: string | null;
   }
 > {
-  state = { files: [], filenames: [], error: null };
+  state = { error: null };
   async processFiles(newFiles: FileList) {
     try {
-      this.setState({
-        filenames: map(newFiles, f => f.name),
-        files: await Promise.all(map(newFiles, async f => await readAsText(f)))
+      this.props.updateAppState({
+        da1AscFiles: map(newFiles, f => f.path)
       });
     } catch (e) {
       this.setState({ error: e.message });
@@ -35,8 +31,8 @@ export class DA1ASCFileInput extends React.Component<
           }
         />
         {this.state.error && <ErrorText>{this.state.error}</ErrorText>}
-        {this.state.filenames.length > 0 &&
-          map(this.state.filenames, f => <div key={f}>{f}</div>)}
+        {this.props.files.length > 0 &&
+          map(this.props.files, f => <div key={f}>{last(f.split("/"))}</div>)}
       </Wrapper>
     );
   }

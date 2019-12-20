@@ -10,18 +10,24 @@ export class CutoffsConfigInput extends React.Component<{
 }> {
   render() {
     return (
-      <FormWrapper>
-        {this.renderField("Fixation Minimum Cutoff", "min", "ms")}
-        {this.renderField("Fixation Maximim Cutoff", "max", "ms")}
-        {this.renderSwitch(
-          "Include cutoff fixations in calculated measures?",
-          "include_fixation"
-        )}
-        {this.renderSwitch(
-          "Include cutoff saccades in calculated measures?",
-          "include_saccades"
-        )}
-      </FormWrapper>
+      <div>
+        <FormWrapper>
+          {this.renderField("Fixation Minimum Cutoff", "min", "ms")}
+          {this.renderField("Fixation Maximim Cutoff", "max", "ms")}
+        </FormWrapper>
+        <FormWrapper>
+          {this.renderSwitch(
+            "Include cutoff fixations in calculated measures?",
+            "include_fixation"
+          )}
+        </FormWrapper>
+        <FormWrapper>
+          {this.renderSwitch(
+            "Include cutoff saccades in calculated measures?",
+            "include_saccades"
+          )}
+        </FormWrapper>
+      </div>
     );
   }
 

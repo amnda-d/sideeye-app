@@ -1,9 +1,8 @@
 import { FileInput } from "@blueprintjs/core";
 import { mount, ReactWrapper } from "enzyme";
 import * as React from "react";
-import { set } from "lodash";
 import { FileConfigInput } from "renderer/config/file";
-import { defaultConfig, Config } from "renderer/config/default-config";
+import { defaultConfig } from "renderer/config/default-config";
 import { expectToExist, waitForUpdate } from "test/utils";
 
 describe("Parser Configuration Input", () => {
@@ -14,8 +13,9 @@ describe("Parser Configuration Input", () => {
     wrapper = mount(
       <FileConfigInput
         config={defaultConfig}
-        updateConfig={(value: Config) => {
-          state = set(state, "config", value);
+        fileName={null}
+        updateConfig={(value: any) => {
+          state = { ...state, ...value };
         }}
       />
     );

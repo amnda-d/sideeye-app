@@ -9,12 +9,22 @@ import { DA1ConfigInput } from "renderer/config/da1";
 import { ASCConfigInput } from "renderer/config/asc";
 import { OutputFileConfigInput } from "renderer/config/output";
 import { expectToExist } from "test/utils";
+import { defaultConfig, Config } from "renderer/config/default-config";
 
 describe("Configuration Input", () => {
   let wrapper: ReactWrapper;
+  let state: { config: Config };
 
   beforeEach(() => {
-    wrapper = mount(<ConfigInput />);
+    state = { config: defaultConfig };
+    wrapper = mount(
+      <ConfigInput
+        updateAppState={newState => {
+          state = { ...state, ...newState };
+        }}
+        config={defaultConfig}
+      />
+    );
   });
 
   it("displays the file input by default", () =>

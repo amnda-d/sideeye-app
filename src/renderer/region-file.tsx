@@ -4,19 +4,37 @@ import { readAsText } from "promise-file-reader";
 import styled from "styled-components";
 
 export class RegionFileInput extends React.Component<
-  {},
   {
+    updateAppState: (state: {}) => void;
     regionFile: string | null;
-    name: string | null;
+    regionFileName: string | null;
+    regionFilePath: string | null;
+  },
+  {
     error: string | null;
   }
 > {
-  state = { regionFile: null, name: null, error: null };
+  state = { error: null };
   async processNewFile(newFile: File) {
     try {
-      console.log(newFile);
       const regionFile = await readAsText(newFile);
-      this.setState({ regionFile, name: newFile.name });
+      // await axios.post("http://localhost:3001/sideeye", { file: newFile.path });
+      // let form = new FormData();
+      // form.append("file", newFile);
+      // // form.append("test", "test");
+      // const formData = {
+      //   testfile: fs.createReadStream(newFile.path),
+      //   test: "test"
+      // };
+      // await request.post("http://localhost:3001/sideeye", {
+      //   file: newFile.path
+      // });
+      const regionFilePath = newFile.path;
+      this.props.updateAppState({
+        regionFile,
+        regionFileName: newFile.name,
+        regionFilePath
+      });
     } catch (e) {
       this.setState({ error: e.message });
     }
@@ -26,7 +44,7 @@ export class RegionFileInput extends React.Component<
     return (
       <Wrapper>
         <StyledFileInput
-          text={this.state.name || "Choose Region File..."}
+          text={this.props.regionFileName || "Choose Region File..."}
           onInputChange={async (e: React.ChangeEvent<HTMLInputElement>) =>
             e.target.files && (await this.processNewFile(e.target.files[0]))
           }

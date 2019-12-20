@@ -5,6 +5,13 @@ import { ReactWrapper } from "enzyme";
 import { some, isArray, isEqual } from "lodash";
 import { StyledComponent } from "styled-components";
 
+export class TestFile extends File {
+  constructor(contents: string[], name: string) {
+    super(contents, name);
+    this.path = name;
+  }
+}
+
 export function expectToExist(element: ReactWrapper<any>): void {
   expect(element.exists()).toEqual(true);
 }

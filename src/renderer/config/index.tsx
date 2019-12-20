@@ -9,9 +9,13 @@ import { RegionConfigInput } from "renderer/config/region";
 import { MeasuresConfigInput } from "renderer/config/measures";
 import { FileConfigInput } from "renderer/config/file";
 import { OutputFileConfigInput } from "renderer/config/output";
-import { defaultConfig } from "renderer/config/default-config";
+import { Config } from "renderer/config/default-config";
 
-export class ConfigInput extends React.Component {
+export class ConfigInput extends React.Component<{
+  updateAppState: (state: {}) => void;
+  config: Config;
+  configFileName: string | null;
+}> {
   state = {
     displayConfig: false,
     displayRegion: false,
@@ -19,18 +23,21 @@ export class ConfigInput extends React.Component {
     displayASC: false,
     displayCutoffs: false,
     displayMeasures: false,
-    displayOutput: false,
-    config: defaultConfig
+    displayOutput: false
   };
 
   render() {
     return (
       <Wrapper>
         <FileConfigInput
-          config={this.state.config}
-          updateConfig={newValue =>
-            this.setState(set(this.state, "config", newValue))
-          }
+          config={this.props.config}
+          fileName={this.props.configFileName}
+          updateConfig={newValue => {
+            this.props.updateAppState(newValue);
+            this.setState({
+              displayConfig: true
+            });
+          }}
         />
         <button onClick={() => this.setState({ displayConfig: true })}>
           Create New Configuration
@@ -46,9 +53,13 @@ export class ConfigInput extends React.Component {
             </Header>
             {this.state.displayRegion && (
               <RegionConfigInput
-                config={this.state.config}
-                updateConfig={(key, newValue) =>
-                  this.setState(set(this.state, `config.${key}`, newValue))
+                config={this.props.config}
+                updateConfig={
+                  (key, newValue) =>
+                    this.props.updateAppState({
+                      config: set(this.props.config, key, newValue)
+                    })
+                  // this.setState(set(this.state, `config.${key}`, newValue))
                 }
               />
             )}
@@ -61,9 +72,11 @@ export class ConfigInput extends React.Component {
             </Header>
             {this.state.displayDA1 && (
               <DA1ConfigInput
-                config={this.state.config}
+                config={this.props.config}
                 updateConfig={(key, newValue) =>
-                  this.setState(set(this.state, `config.${key}`, newValue))
+                  this.props.updateAppState({
+                    config: set(this.props.config, key, newValue)
+                  })
                 }
               />
             )}
@@ -76,9 +89,11 @@ export class ConfigInput extends React.Component {
             </Header>
             {this.state.displayASC && (
               <ASCConfigInput
-                config={this.state.config}
+                config={this.props.config}
                 updateConfig={(key, newValue) =>
-                  this.setState(set(this.state, `config.${key}`, newValue))
+                  this.props.updateAppState({
+                    config: set(this.props.config, key, newValue)
+                  })
                 }
               />
             )}
@@ -91,9 +106,11 @@ export class ConfigInput extends React.Component {
             </Header>
             {this.state.displayCutoffs && (
               <CutoffsConfigInput
-                config={this.state.config}
+                config={this.props.config}
                 updateConfig={(key, newValue) =>
-                  this.setState(set(this.state, `config.${key}`, newValue))
+                  this.props.updateAppState({
+                    config: set(this.props.config, key, newValue)
+                  })
                 }
               />
             )}
@@ -108,9 +125,11 @@ export class ConfigInput extends React.Component {
             </Header>
             {this.state.displayMeasures && (
               <MeasuresConfigInput
-                config={this.state.config}
+                config={this.props.config}
                 updateConfig={(key, newValue) =>
-                  this.setState(set(this.state, `config.${key}`, newValue))
+                  this.props.updateAppState({
+                    config: set(this.props.config, key, newValue)
+                  })
                 }
               />
             )}
@@ -125,9 +144,11 @@ export class ConfigInput extends React.Component {
             </Header>
             {this.state.displayOutput && (
               <OutputFileConfigInput
-                config={this.state.config}
+                config={this.props.config}
                 updateConfig={(key, newValue) =>
-                  this.setState(set(this.state, `config.${key}`, newValue))
+                  this.props.updateAppState({
+                    config: set(this.props.config, key, newValue)
+                  })
                 }
               />
             )}
@@ -144,12 +165,17 @@ const Wrapper = styled.div`
 
 export const FormWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: left;
   margin: 10px 30px;
 
   .bp3-form-group {
     flex-direction: column;
+    margin: 0 10px;
+  }
+
+  .bp3-input-group {
+    min-width: 155px;
   }
 
   .bp3-form-group.bp3-inline label.bp3-label {

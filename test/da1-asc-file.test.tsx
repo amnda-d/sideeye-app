@@ -2,13 +2,21 @@ import { FileInput } from "@blueprintjs/core";
 import { mount, ReactWrapper } from "enzyme";
 import * as React from "react";
 import { DA1ASCFileInput } from "renderer/da1-asc-file";
-import { expectToExist, waitForUpdate } from "test/utils";
+import { expectToExist, waitForUpdate, TestFile } from "test/utils";
 
 describe("Region File Input", () => {
   let wrapper: ReactWrapper;
+  let state = { da1AscFiles: [] };
 
   beforeEach(() => {
-    wrapper = mount(<DA1ASCFileInput />);
+    wrapper = mount(
+      <DA1ASCFileInput
+        files={[]}
+        updateAppState={(value: any) => {
+          state = { ...state, ...value };
+        }}
+      />
+    );
   });
 
   it("displays a file input", () =>
@@ -26,9 +34,9 @@ describe("Region File Input", () => {
         .simulate("change", {
           target: {
             files: [
-              new File(["testda1"], "test.da1"),
-              new File(["test2"], "test2.da1"),
-              new File(["test3"], "test.asc")
+              new TestFile(["testda1"], "test.da1"),
+              new TestFile(["test2"], "test2.da1"),
+              new TestFile(["test3"], "test.asc")
             ]
           }
         });
@@ -36,16 +44,17 @@ describe("Region File Input", () => {
     });
 
     it("updates the filenames value", () =>
-      expect(wrapper.state("filenames")).toEqual([
-        "test.da1",
-        "test2.da1",
-        "test.asc"
-      ]));
-
-    it("updates the files value", () =>
-      expect(wrapper.state("files")).toEqual(["testda1", "test2", "test3"]));
+      expect(state.da1AscFiles).toEqual(["test.da1", "test2.da1", "test.asc"]));
 
     it("displays a list of filenames", () => {
+      wrapper = mount(
+        <DA1ASCFileInput
+          files={["test.da1", "test2.da1", "test.asc"]}
+          updateAppState={(value: any) => {
+            state = { ...state, ...value };
+          }}
+        />
+      );
       expectToExist(
         wrapper.find("div").filterWhere(e => e.text() === "test.da1")
       );
