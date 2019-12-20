@@ -1,0 +1,37 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/node:10.15
+    working_directory: ~/sideeye-app
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: install dependencies
+          command: |
+            yarn install
+      - save_cache:
+          paths:
+            - ./node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: tsc
+          command: |
+            node_modules/.bin/tsc --noEmit
+      - run:
+          name: run tests
+          command: |
+            yarn jest
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test:
+          filters:
+            tags:
+              only: /.*/
