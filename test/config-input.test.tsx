@@ -23,6 +23,7 @@ describe("Configuration Input", () => {
           state = { ...state, ...newState };
         }}
         config={defaultConfig}
+        configFileName={null}
       />
     );
   });
