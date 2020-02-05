@@ -1,12 +1,12 @@
 export const colors = {
-  text: "#2e2633",
-  background: "#e9e9e9",
+  text: "#23293E",
+  background: "#E1E5EE",
   white: "#ffffff",
-  gray: "#555152",
-  lightGray: "#dddddd",
-  lightGreen: "#efffcd",
-  green: "#dce9be",
-  darkGreen: "#a4ba72",
-  red: "#99173c",
-  navigation: "#ec9f68"
+  gray: "#767B91",
+  lightGray: "#C2C7D6",
+  lightGreen: "#BFC2C9",
+  green: "#C7CCDB",
+  darkGreen: "#868C9E",
+  red: "#F7C59F",
+  navigation: "#824373"
 };

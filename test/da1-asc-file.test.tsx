@@ -56,13 +56,13 @@ describe("Region File Input", () => {
         />
       );
       expectToExist(
-        wrapper.find("div").filterWhere(e => e.text() === "test.da1")
+        wrapper.find("li").filterWhere(e => e.text() === "test.da1")
       );
       expectToExist(
-        wrapper.find("div").filterWhere(e => e.text() === "test2.da1")
+        wrapper.find("li").filterWhere(e => e.text() === "test2.da1")
       );
       expectToExist(
-        wrapper.find("div").filterWhere(e => e.text() === "test.asc")
+        wrapper.find("li").filterWhere(e => e.text() === "test.asc")
       );
     });
   });

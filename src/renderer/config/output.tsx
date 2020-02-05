@@ -75,6 +75,7 @@ export class OutputFileConfigInput extends React.Component<{
 const MeasureWrapper = styled.div`
   border-radius: 3px;
   padding: 10px;
+  width: 100%;
 
   .bp3-checkbox {
     margin: 0;
@@ -83,6 +84,8 @@ const MeasureWrapper = styled.div`
 `;
 
 const Wrapper = styled.div`
+  width: 100%;
+
   ${MeasureWrapper}:nth-child(even) {
     background-color: ${colors.background};
   }

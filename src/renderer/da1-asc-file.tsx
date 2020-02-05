@@ -31,22 +31,35 @@ export class DA1ASCFileInput extends React.Component<
           }
         />
         {this.state.error && <ErrorText>{this.state.error}</ErrorText>}
-        {this.props.files.length > 0 &&
-          map(this.props.files, f => <div key={f}>{last(f.split("/"))}</div>)}
+        {this.props.files.length > 0 && (
+          <FileList>
+            {map(this.props.files, f => (
+              <li key={f}>{last(f.split("/"))}</li>
+            ))}
+          </FileList>
+        )}
       </Wrapper>
     );
   }
 }
 
+const FileList = styled.ol`
+  li {
+    font-size: 14px;
+    font-weight: bold;
+  }
+`;
+
 const StyledFileInput = styled(FileInput)`
-  margin: 0 auto;
   align-self: center;
 `;
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  height: calc(100vh - 60px);
   justify-content: center;
+  align-items: center;
   width: 100vw;
 `;
 
