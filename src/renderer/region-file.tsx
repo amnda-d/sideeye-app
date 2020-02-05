@@ -18,17 +18,6 @@ export class RegionFileInput extends React.Component<
   async processNewFile(newFile: File) {
     try {
       const regionFile = await readAsText(newFile);
-      // await axios.post("http://localhost:3001/sideeye", { file: newFile.path });
-      // let form = new FormData();
-      // form.append("file", newFile);
-      // // form.append("test", "test");
-      // const formData = {
-      //   testfile: fs.createReadStream(newFile.path),
-      //   test: "test"
-      // };
-      // await request.post("http://localhost:3001/sideeye", {
-      //   file: newFile.path
-      // });
       const regionFilePath = newFile.path;
       this.props.updateAppState({
         regionFile,
