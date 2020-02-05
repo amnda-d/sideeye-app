@@ -1,4 +1,6 @@
 import * as React from "react";
+import download from "downloadjs";
+import axios from "axios";
 import styled from "styled-components";
 import { RegionFileInput } from "renderer/region-file";
 import { DA1ASCFileInput } from "renderer/da1-asc-file";
@@ -8,34 +10,6 @@ import { Config, defaultConfig } from "renderer/config/default-config";
 import { Navigation } from "renderer/navigation";
 import { Title } from "renderer/title";
 import { colors } from "renderer/colors";
-
-// import getRequest from "renderer/get_request";
-
-// class SideEye extends React.Component<{}, { test: ?string }> {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       test: null,
-//     };
-//   }
-//
-//   render() {
-//     return (
-//       <div>
-//         <button
-//           onClick={() =>
-//             getRequest(`http://localhost:3001/test`).then(r =>
-//               this.setState({ test: r.test }),
-//             )
-//           }
-//         >
-//           dsfasdf
-//         </button>
-//         <p>{this.state.test}</p>
-//       </div>
-//     );
-//   }
-// }
 
 export type AppConfig = {
   page: string;
@@ -86,7 +60,18 @@ class App extends React.Component<{}, AppConfig> {
         )}
         {this.state.regionFilePath &&
           this.state.config &&
-          this.state.da1AscFiles.length > 0 && <CSVDownload />}
+          this.state.da1AscFiles.length > 0 && (
+            <CSVDownload
+              onClick={async () => {
+                const resp = await axios.post("http://localhost:3001/sideeye", {
+                  region_file: this.state.regionFilePath,
+                  config: this.state.config,
+                  files: this.state.da1AscFiles
+                });
+                download(resp.data, "out.csv", "test/csv");
+              }}
+            />
+          )}
       </Wrapper>
     );
   }

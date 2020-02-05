@@ -2,13 +2,11 @@ import * as React from "react";
 import styled from "styled-components";
 import { colors } from "renderer/colors";
 
-export class CSVDownload extends React.Component {
-  render() {
-    return <CSVButton>Download CSV</CSVButton>;
-  }
-}
+export const CSVDownload = (props: { onClick: () => void }) => (
+  <CSVButton {...props}>Download CSV</CSVButton>
+);
 
-const CSVButton = styled.div`
+const CSVButton = styled.button`
   background-color: ${colors.navigation};
   flex-direction: column;
   padding: 10px;

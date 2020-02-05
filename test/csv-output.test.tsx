@@ -1,9 +1,13 @@
+import axios from "axios";
 import { mount, ReactWrapper } from "enzyme";
 import * as React from "react";
 import App from "renderer/main";
 import { CSVDownload } from "renderer/csv-download";
 import { expectToExist, expectNotToExist, waitForUpdate } from "test/utils";
 import { defaultConfig } from "renderer/config/default-config";
+
+jest.mock("axios");
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe("CSV Download", () => {
   let wrapper: ReactWrapper;
@@ -58,7 +62,7 @@ describe("CSV Download", () => {
         regionFilePath: "region.cnt",
         regionFileName: "region.cnt",
         regionFile: null,
-        confifg: defaultConfig,
+        config: defaultConfig,
         configFileName: "config.json",
         da1AscFiles: ["test.da1", "test.asc"]
       });
@@ -70,7 +74,30 @@ describe("CSV Download", () => {
 
     it("has the correct text", () =>
       expectToExist(
-        wrapper.find("div").filterWhere(e => e.text() === "Download CSV")
+        wrapper.find("button").filterWhere(e => e.text() === "Download CSV")
       ));
+
+    describe('when clicking "Download CSV"', () => {
+      beforeEach(() => {
+        mockedAxios.post.mockImplementationOnce(() =>
+          Promise.resolve({ data: "csv" })
+        );
+        wrapper
+          .find("button")
+          .filterWhere(e => e.text() === "Download CSV")
+          .simulate("click", { button: 0 });
+      });
+
+      it("makes a post request to the API", () => {
+        expect(mockedAxios.post).toHaveBeenCalledWith(
+          `http://localhost:3001/sideeye`,
+          {
+            region_file: "region.cnt",
+            config: defaultConfig,
+            files: ["test.da1", "test.asc"]
+          }
+        );
+      });
+    });
   });
 });
