@@ -4,7 +4,12 @@ import { mount, ReactWrapper } from "enzyme";
 import { forEach, get, set } from "lodash";
 import { OutputFileConfigInput } from "renderer/config/output";
 import { defaultConfig } from "renderer/config/default-config";
-import { expectFormInput, expectToExist, expectNotToExist } from "test/utils";
+import {
+  expectFormInput,
+  expectToExist,
+  expectNotToExist,
+  expectFormRadio
+} from "test/utils";
 
 const columns = [
   "experiment_name",
@@ -64,4 +69,9 @@ describe("Output File Configuration Input", () => {
     });
 
   forEach(columns, async c => await testOutputConfig(c));
+
+  it("displays the wide/long format options", () => {
+    expectFormRadio(wrapper, "Wide", "Output Format", true);
+    expectFormRadio(wrapper, "Long", "Output Format", false);
+  });
 });

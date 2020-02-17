@@ -1,5 +1,5 @@
 import { ISelectProps } from "@blueprintjs/select";
-import { FormGroup, Switch } from "@blueprintjs/core";
+import { FormGroup, Switch, RadioGroup, Radio } from "@blueprintjs/core";
 import * as React from "react";
 import { ReactWrapper } from "enzyme";
 import { some, isArray, isEqual } from "lodash";
@@ -105,6 +105,23 @@ export const expectFormSwitch = (
     wrapper
       .find(Switch)
       .filterWhere(e => e.prop("id") === id)
+      .prop("checked")
+  ).toEqual(value);
+};
+
+export const expectFormRadio = (
+  wrapper: ReactWrapper,
+  radioLabel: string,
+  label: string,
+  value: boolean
+) => {
+  expectToExist(
+    wrapper.find(RadioGroup).filterWhere(e => e.prop("label") === label)
+  );
+  expect(
+    wrapper
+      .find(Radio)
+      .filterWhere(e => e.prop("label") === radioLabel)
       .prop("checked")
   ).toEqual(value);
 };

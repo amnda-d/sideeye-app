@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Checkbox } from "@blueprintjs/core";
+import { Checkbox, Radio, RadioGroup } from "@blueprintjs/core";
 import { map, get } from "lodash";
 import styled from "styled-components";
 import { FormWrapper } from "renderer/config";
@@ -19,7 +19,8 @@ const columns = {
   region_number: "Region Number",
   region_text: "Region Text",
   region_start: "Region Start",
-  region_end: "Region End"
+  region_end: "Region End",
+  value: "Value"
 };
 
 export class OutputFileConfigInput extends React.Component<{
@@ -30,6 +31,21 @@ export class OutputFileConfigInput extends React.Component<{
     return (
       <FormWrapper>
         <Wrapper>
+          <RadioGroup
+            label="Output Format"
+            onChange={() =>
+              this.props.updateConfig(
+                `wide_format`,
+                !get(this.props.config, `wide_format`) || false
+              )
+            }
+            selectedValue={
+              get(this.props.config, `wide_format`).toString() || "false"
+            }
+          >
+            <Radio label="Wide" value="true" />
+            <Radio label="Long" value="false" />
+          </RadioGroup>
           {map(columns, (label, id) => this.renderColumn(label, id))}
         </Wrapper>
       </FormWrapper>
@@ -86,11 +102,11 @@ const MeasureWrapper = styled.div`
 const Wrapper = styled.div`
   width: 100%;
 
-  ${MeasureWrapper}:nth-child(even) {
+  ${MeasureWrapper}:nth-child(odd) {
     background-color: ${colors.background};
   }
 
-  ${MeasureWrapper}:nth-child(odd) {
+  ${MeasureWrapper}:nth-child(even) {
     background-color: ${colors.lightGray};
   }
 `;
