@@ -35,7 +35,12 @@ class App extends React.Component<{}, AppConfig> {
   render() {
     return (
       <Wrapper>
-        <Navigation updatePage={page => this.setState({ page })} />
+        <Navigation
+          regionDone={this.state.regionFilePath != null}
+          configDone={this.state.config != null}
+          filesDone={this.state.da1AscFiles.length > 0}
+          updatePage={page => this.setState({ page })}
+        />
         {this.state.page === "/" && <Title />}
         {this.state.page === "/region" && (
           <RegionFileInput
@@ -58,20 +63,23 @@ class App extends React.Component<{}, AppConfig> {
             files={this.state.da1AscFiles}
           />
         )}
-        {this.state.regionFilePath &&
-          this.state.config &&
-          this.state.da1AscFiles.length > 0 && (
-            <CSVDownload
-              onClick={async () => {
-                const resp = await axios.post("http://localhost:3001/sideeye", {
-                  region_file: this.state.regionFilePath,
-                  config: this.state.config,
-                  files: this.state.da1AscFiles
-                });
-                download(resp.data, "out.csv", "test/csv");
-              }}
-            />
-          )}
+        <CSVDownload
+          disabled={
+            !(
+              this.state.regionFilePath &&
+              this.state.config &&
+              this.state.da1AscFiles.length > 0
+            )
+          }
+          onClick={async () => {
+            const resp = await axios.post("http://localhost:3001/sideeye", {
+              region_file: this.state.regionFilePath,
+              config: this.state.config,
+              files: this.state.da1AscFiles
+            });
+            download(resp.data, "out.csv", "test/csv");
+          }}
+        />
       </Wrapper>
     );
   }

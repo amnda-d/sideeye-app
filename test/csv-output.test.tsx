@@ -3,7 +3,7 @@ import { mount, ReactWrapper } from "enzyme";
 import * as React from "react";
 import App from "renderer/main";
 import { CSVDownload } from "renderer/csv-download";
-import { expectToExist, expectNotToExist, waitForUpdate } from "test/utils";
+import { expectToExist, waitForUpdate } from "test/utils";
 import { defaultConfig } from "renderer/config/default-config";
 
 jest.mock("axios");
@@ -16,8 +16,8 @@ describe("CSV Download", () => {
     wrapper = mount(<App />);
   });
 
-  it('does not initially display the "Download CSV button"', () =>
-    expectNotToExist(wrapper.find(CSVDownload)));
+  it('initiallys display the "Download CSV" button as disabled', () =>
+    expect(wrapper.find(CSVDownload).prop("disabled")).toEqual(true));
 
   describe("after selecting a region file", () => {
     beforeEach(async () => {
@@ -33,8 +33,8 @@ describe("CSV Download", () => {
       await waitForUpdate(wrapper);
     });
 
-    it('displays the "Download CSV button"', () =>
-      expectNotToExist(wrapper.find(CSVDownload)));
+    it('displays the "Download CSV" button as disabled', () =>
+      expect(wrapper.find(CSVDownload).prop("disabled")).toEqual(true));
   });
 
   describe("after selecting a da1 file", () => {
@@ -51,8 +51,8 @@ describe("CSV Download", () => {
       await waitForUpdate(wrapper);
     });
 
-    it('displays the "Download CSV button"', () =>
-      expectNotToExist(wrapper.find(CSVDownload)));
+    it('displays the "Download CSV" button as disabled', () =>
+      expect(wrapper.find(CSVDownload).prop("disabled")).toEqual(true));
   });
 
   describe("after selecting all files", () => {
@@ -70,7 +70,7 @@ describe("CSV Download", () => {
     });
 
     it('displays the "Download CSV button"', () =>
-      expectToExist(wrapper.find(CSVDownload)));
+      expect(wrapper.find(CSVDownload).prop("disabled")).toEqual(false));
 
     it("has the correct text", () =>
       expectToExist(

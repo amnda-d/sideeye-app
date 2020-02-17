@@ -10,6 +10,7 @@ type OutputConfig = {
 };
 
 export type Config = {
+  wide_format: boolean;
   da1_fields: {
     index: number;
     condition: number;
@@ -58,6 +59,7 @@ export type Config = {
 };
 
 export const defaultConfig = {
+  wide_format: true,
   da1_fields: {
     index: 0,
     condition: 1,
@@ -124,6 +126,7 @@ export const defaultConfig = {
     region_number: {},
     region_text: { exclude: true },
     region_start: { exclude: true },
-    region_end: { exclude: true }
+    region_end: { exclude: true },
+    value: { exclude: true }
   }
 };

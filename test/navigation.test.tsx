@@ -1,7 +1,7 @@
 import { mount, ReactWrapper } from "enzyme";
 import * as React from "react";
 import App from "renderer/main";
-import { Navigation } from "renderer/navigation";
+import { Navigation, NavButton } from "renderer/navigation";
 import { DA1ASCFileInput } from "renderer/da1-asc-file";
 import { RegionFileInput } from "renderer/region-file";
 import { Title } from "renderer/title";
@@ -22,24 +22,24 @@ describe("Page Navigation", () => {
 
   it('displays the Region Input page when clicking "Regions"', () => {
     wrapper
-      .find("div")
-      .filterWhere(e => e.text() === "Regions")
+      .find(NavButton)
+      .filterWhere(e => e.text().includes("Regions"))
       .simulate("click", { button: 0 });
     expectToExist(wrapper.find(RegionFileInput));
   });
 
   it('displays the DA1/ASC Input page when clicking "DA1/ASC Files"', () => {
     wrapper
-      .find("div")
-      .filterWhere(e => e.text() === "DA1/ASC Files")
+      .find(NavButton)
+      .filterWhere(e => e.text().includes("DA1/ASC Files"))
       .simulate("click", { button: 0 });
     expectToExist(wrapper.find(DA1ASCFileInput));
   });
 
   it('displays the title page when clicking "Home"', () => {
     wrapper
-      .find("div")
-      .filterWhere(e => e.text() === "Home")
+      .find("svg")
+      .first()
       .simulate("click", { button: 0 });
     expectToExist(wrapper.find(Title));
   });

@@ -39,11 +39,11 @@ export class ConfigInput extends React.Component<{
             });
           }}
         />
-        <button onClick={() => this.setState({ displayConfig: true })}>
+        <NewConfig onClick={() => this.setState({ displayConfig: true })}>
           Create New Configuration
-        </button>
+        </NewConfig>
         {this.state.displayConfig && (
-          <div>
+          <ConfigOptions>
             <Header
               onClick={() =>
                 this.setState({ displayRegion: !this.state.displayRegion })
@@ -54,12 +54,10 @@ export class ConfigInput extends React.Component<{
             {this.state.displayRegion && (
               <RegionConfigInput
                 config={this.props.config}
-                updateConfig={
-                  (key, newValue) =>
-                    this.props.updateAppState({
-                      config: set(this.props.config, key, newValue)
-                    })
-                  // this.setState(set(this.state, `config.${key}`, newValue))
+                updateConfig={(key, newValue) =>
+                  this.props.updateAppState({
+                    config: set(this.props.config, key, newValue)
+                  })
                 }
               />
             )}
@@ -152,7 +150,7 @@ export class ConfigInput extends React.Component<{
                 }
               />
             )}
-          </div>
+          </ConfigOptions>
         )}
       </Wrapper>
     );
@@ -160,7 +158,12 @@ export class ConfigInput extends React.Component<{
 }
 
 const Wrapper = styled.div`
-  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 60px);
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
 `;
 
 export const FormWrapper = styled.div`
@@ -178,11 +181,31 @@ export const FormWrapper = styled.div`
     min-width: 155px;
   }
 
+  label.bp3-control.bp3-switch {
+    margin: 0;
+  }
+
+  .bp3-form-group label.bp3-label {
+    line-height: 20px;
+    font-size: 12px;
+    color: ${colors.gray};
+  }
+
   .bp3-form-group.bp3-inline label.bp3-label {
     line-height: 20px;
     font-size: 12px;
     color: ${colors.gray};
   }
+`;
+
+const ConfigOptions = styled.div`
+  width: 75%;
+  height: 75%;
+  overflow: scroll;
+`;
+
+const NewConfig = styled.button`
+  margin: 15px;
 `;
 
 const Header = styled.div`
