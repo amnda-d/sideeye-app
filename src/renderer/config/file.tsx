@@ -3,7 +3,7 @@ import { FileInput } from "@blueprintjs/core";
 import { readAsText } from "promise-file-reader";
 import { mapValues } from "lodash";
 import styled from "styled-components";
-import { Config } from "renderer/config/default-config";
+import { Config, defaultConfig } from "renderer/config/default-config";
 
 export class FileConfigInput extends React.Component<
   {
@@ -77,13 +77,14 @@ export class FileConfigInput extends React.Component<
             mapValues(configJSON.region_measures, measure_config => ({
               ...measure_config,
               use_cutoff: measure_config.cutoff ? true : false
-            })) || {},
+            })) || defaultConfig.region_measures,
           trial_measures:
             mapValues(configJSON.trial_measures, measure_config => ({
               ...measure_config,
               use_cutoff: measure_config.cutoff ? true : false
-            })) || {},
-          output_columns: configJSON.output_columns || {}
+            })) || defaultConfig.trial_measures,
+          output_columns:
+            configJSON.output_columns || defaultConfig.output_columns
         }
       });
     } catch (e) {

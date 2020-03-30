@@ -40,7 +40,7 @@ export class OutputFileConfigInput extends React.Component<{
               )
             }
             selectedValue={
-              get(this.props.config, `wide_format`).toString() || "false"
+              get(this.props.config, `wide_format`, false).toString() || "false"
             }
           >
             <Radio label="Wide" value="true" />
