@@ -3,20 +3,22 @@ import { mount, ReactWrapper } from "enzyme";
 import * as React from "react";
 import App from "renderer/main";
 import { CSVDownload } from "renderer/csv-download";
+import { DataDisplay } from "renderer/components/data-display";
 import { expectToExist, waitForUpdate } from "test/utils";
 import { defaultConfig } from "renderer/config/default-config";
 
 jest.mock("axios");
+window.URL.createObjectURL = jest.fn();
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-describe("CSV Download", () => {
+describe("Process Data", () => {
   let wrapper: ReactWrapper;
 
   beforeEach(() => {
     wrapper = mount(<App />);
   });
 
-  it('initiallys display the "Download CSV" button as disabled', () =>
+  it('initiallys display the "Process Data" button as disabled', () =>
     expect(wrapper.find(CSVDownload).prop("disabled")).toEqual(true));
 
   describe("after selecting a region file", () => {
@@ -33,7 +35,7 @@ describe("CSV Download", () => {
       await waitForUpdate(wrapper);
     });
 
-    it('displays the "Download CSV" button as disabled', () =>
+    it('displays the "Process Data" button as disabled', () =>
       expect(wrapper.find(CSVDownload).prop("disabled")).toEqual(true));
   });
 
@@ -51,7 +53,7 @@ describe("CSV Download", () => {
       await waitForUpdate(wrapper);
     });
 
-    it('displays the "Download CSV" button as disabled', () =>
+    it('displays the "Process Data" button as disabled', () =>
       expect(wrapper.find(CSVDownload).prop("disabled")).toEqual(true));
   });
 
@@ -69,22 +71,22 @@ describe("CSV Download", () => {
       await waitForUpdate(wrapper);
     });
 
-    it('displays the "Download CSV button"', () =>
+    it('displays the "Process Data button"', () =>
       expect(wrapper.find(CSVDownload).prop("disabled")).toEqual(false));
 
     it("has the correct text", () =>
       expectToExist(
-        wrapper.find("button").filterWhere(e => e.text() === "Download CSV")
+        wrapper.find("button").filterWhere(e => e.text() === "Process Data")
       ));
 
-    describe('when clicking "Download CSV"', () => {
+    describe('when clicking "Process Data"', () => {
       beforeEach(() => {
         mockedAxios.post.mockImplementationOnce(() =>
           Promise.resolve({ data: "csv" })
         );
         wrapper
           .find("button")
-          .filterWhere(e => e.text() === "Download CSV")
+          .filterWhere(e => e.text() === "Process Data")
           .simulate("click", { button: 0 });
       });
 
@@ -97,6 +99,15 @@ describe("CSV Download", () => {
             files: ["test.da1", "test.asc"]
           }
         );
+      });
+
+      it("sets 'data' to 'csv'", () => {
+        expect(wrapper.state("data")).toEqual("csv");
+      });
+
+      it("shows the data display component", async () => {
+        await waitForUpdate(wrapper);
+        expectToExist(wrapper.find(DataDisplay));
       });
     });
   });

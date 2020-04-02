@@ -5,7 +5,7 @@ import { colors } from "renderer/colors";
 export const CSVDownload = (props: {
   onClick: () => void;
   disabled: boolean;
-}) => <CSVButton {...props}>Download CSV</CSVButton>;
+}) => <CSVButton {...props}>Process Data</CSVButton>;
 
 const CSVButton = styled.button`
   background-color: ${props =>
